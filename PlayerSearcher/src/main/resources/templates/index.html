@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Welcome</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<h1 style="text-align:center">Добро пожаловать в сервис поиска игроков в настольный теннис!</h1>
+<!--<h2 th:utext="${message}">..!..</h2>-->
+
+<!--
+
+   In Thymeleaf the equivalent of
+   JSP's ${pageContext.request.contextPath}/edit.html
+   would be @{/edit.html}
+
+   -->
+
+<!--<a th:href="@{/personList}">Найти игрока</a>-->
+<div align="center">
+    <!--<button th:href="@{/personList}">Найти игрока</button>-->
+    <a th:href="@{/suggestions}">Найти игрока</a>
+</div>
+</body>
+
+</html>
