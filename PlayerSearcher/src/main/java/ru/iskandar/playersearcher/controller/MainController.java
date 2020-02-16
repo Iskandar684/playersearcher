@@ -54,6 +54,10 @@ public class MainController {
         genders.add(Gender.FEMALE);
         model.addAttribute("genders", genders);
         model.addAttribute("suggestionForm", suggestionForm);
+        List<PlayerLevel> levels = new ArrayList<>();
+        levels.add(PlayerLevel.AMATEUR);
+        levels.add(PlayerLevel.PROFESSIONAL);
+        model.addAttribute("levels", levels);
         return "addSuggestion";
     }
 
@@ -61,13 +65,12 @@ public class MainController {
     public String saveSuggestion(Model model,
                                  @ModelAttribute("suggestionForm") SuggestionForm suggestionForm) {
         String firstName = suggestionForm.getFirstName();
-        String lastName = suggestionForm.getLastName();
         Gender gender = suggestionForm.getGender();
         System.out.println("savePerson   gender from form " + gender);
-
+        PlayerLevel level = suggestionForm.getLevel();
         if (firstName != null && !firstName.isEmpty()
-                && gender != null) {
-            Player pl = new Player(firstName, gender, PlayerLevel.AMATEUR);
+                && gender != null && level != null) {
+            Player pl = new Player(firstName, gender, level);
             Schedule sh1 = new Schedule();
             suggestions.add(new Suggestion(pl, sh1));
             return "redirect:/suggestions";

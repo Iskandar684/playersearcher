@@ -3,15 +3,16 @@ package ru.iskandar.playersearcher.model;
 /**
  * Уровень игрока.
  */
-public enum PlayerLevel {
+public class PlayerLevel {
 
-    AMATEUR("Любитель"),
+    public static PlayerLevel AMATEUR = new PlayerLevel("Любитель");
 
-    PROFESSIONAL("Профессионал");
+    public static PlayerLevel PROFESSIONAL =new PlayerLevel ("Профессионал");
 
     private final String _text;
 
-    PlayerLevel(String aText) {
+    public PlayerLevel(String aText) {
+        //Нужен публичный конструктор. Поэтому enum не подходит.
         _text = aText;
     }
 

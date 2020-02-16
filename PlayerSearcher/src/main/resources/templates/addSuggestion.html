@@ -24,6 +24,12 @@
         <input type="radio" th:field="*{gender}" th:value="${gender}"/>
         <label th:for="${genders}" th:text="${gender}"></label>
     </div>
+    Уровень:
+    <select th:field="*{level}">
+        <option th:each="level : ${levels}"
+                th:value="${level}"
+                th:text="${level}"></option>
+    </select>
 
     <br/>
     <input type="submit" value="Create"/>

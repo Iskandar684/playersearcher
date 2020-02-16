@@ -2,13 +2,15 @@ package ru.iskandar.playersearcher.form;
 
 
 import ru.iskandar.playersearcher.model.Gender;
+import ru.iskandar.playersearcher.model.PlayerLevel;
 
 public class SuggestionForm {
 
     private String firstName;
-    private String lastName;
 
     private Gender gender;
+
+    private PlayerLevel level;
 
     public String getFirstName() {
         return firstName;
@@ -18,15 +20,6 @@ public class SuggestionForm {
         this.firstName = firstName;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-
     public Gender getGender() {
         return gender;
     }
@@ -35,5 +28,11 @@ public class SuggestionForm {
         this.gender = aGender;
     }
 
+    public PlayerLevel getLevel() {
+        return level;
+    }
 
+    public void setLevel(PlayerLevel level) {
+        this.level = level;
+    }
 }
