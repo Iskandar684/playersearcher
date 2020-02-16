@@ -2,7 +2,9 @@ package ru.iskandar.playersearcher.form;
 
 
 import ru.iskandar.playersearcher.model.Gender;
+import ru.iskandar.playersearcher.model.HourInterval;
 import ru.iskandar.playersearcher.model.PlayerLevel;
+import ru.iskandar.playersearcher.model.Schedule;
 
 public class SuggestionForm {
 
@@ -11,6 +13,9 @@ public class SuggestionForm {
     private Gender gender;
 
     private PlayerLevel level;
+
+    private Schedule schedule = new Schedule();
+
 
     public String getFirstName() {
         return firstName;
@@ -34,5 +39,13 @@ public class SuggestionForm {
 
     public void setLevel(PlayerLevel level) {
         this.level = level;
+    }
+
+    public Schedule getSchedule() {
+        return schedule;
+    }
+
+    public void setSchedule(Schedule schedule) {
+        this.schedule = schedule;
     }
 }

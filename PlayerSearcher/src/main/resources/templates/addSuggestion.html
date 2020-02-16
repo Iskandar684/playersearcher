@@ -20,19 +20,46 @@
     <input type="text" th:field="*{firstName}"/>
     <br/>
     Пол:
-    <div  th:each="gender : ${genders}">
+    <div th:each="gender : ${genders}">
         <input type="radio" th:field="*{gender}" th:value="${gender}"/>
         <label th:for="${genders}" th:text="${gender}"></label>
     </div>
     Уровень:
-    <select th:field="*{level}">
-        <option th:each="level : ${levels}"
-                th:value="${level}"
-                th:text="${level}"></option>
-    </select>
+    <div>
+        <select th:field="*{level}">
+            <option th:each="level : ${levels}"
+                    th:value="${level}"
+                    th:text="${level}"></option>
+        </select>
+    </div>
+    График:
+    <div>
+        <table border="1">
+            <tr>
+                <th></th>
+                <th>Пн</th>
+                <th>Вт</th>
+                <th>Ср</th>
+                <th>Чт</th>
+                <th>Пт</th>
+                <th>Сб</th>
+                <th>Вс</th>
+            </tr>
+            <tr th:each="interval : ${intervals}">
+                <td th:utext="${interval}">...</td>
+                <td><input type="checkbox" th:field="*{schedule.intervalsByDay1}" th:value="${interval}"/></td>
+                <td><input type="checkbox" th:field="*{schedule.intervalsByDay2}" th:value="${interval}"/></td>
+                <td><input type="checkbox" th:field="*{schedule.intervalsByDay3}" th:value="${interval}"/></td>
+                <td><input type="checkbox" th:field="*{schedule.intervalsByDay4}" th:value="${interval}"/></td>
+                <td><input type="checkbox" th:field="*{schedule.intervalsByDay5}" th:value="${interval}"/></td>
+                <td><input type="checkbox" th:field="*{schedule.intervalsByDay6}" th:value="${interval}"/></td>
+                <td><input type="checkbox" th:field="*{schedule.intervalsByDay7}" th:value="${interval}"/></td>
+            </tr>
+        </table>
+    </div>
 
     <br/>
-    <input type="submit" value="Create"/>
+    <input type="submit" value="Добавить"/>
 </form>
 
 <br/>

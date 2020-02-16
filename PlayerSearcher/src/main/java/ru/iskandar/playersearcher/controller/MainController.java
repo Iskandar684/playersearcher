@@ -1,6 +1,7 @@
 package ru.iskandar.playersearcher.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import ru.iskandar.playersearcher.form.SuggestionForm;
@@ -21,7 +22,9 @@ public class MainController {
         Player pl1 = new Player("Антон", Gender.MALE, PlayerLevel.PROFESSIONAL);
         Player pl2 = new Player("Инга", Gender.FEMALE, PlayerLevel.AMATEUR);
         Schedule sh1 = new Schedule();
+        sh1.setIntervalsByDay6(Collections.singletonList(new HourInterval(18, 19).toString()));
         Schedule sh2 = new Schedule();
+        sh2.setIntervalsByDay7(Collections.singletonList(new HourInterval(16, 17).toString()));
         suggestions.add(new Suggestion(pl1, sh1));
         suggestions.add(new Suggestion(pl2, sh2));
     }
@@ -58,6 +61,9 @@ public class MainController {
         levels.add(PlayerLevel.AMATEUR);
         levels.add(PlayerLevel.PROFESSIONAL);
         model.addAttribute("levels", levels);
+
+        List<HourInterval> intervals = new HourIntervalFactory().create();
+        model.addAttribute("intervals", intervals);
         return "addSuggestion";
     }
 
@@ -66,13 +72,13 @@ public class MainController {
                                  @ModelAttribute("suggestionForm") SuggestionForm suggestionForm) {
         String firstName = suggestionForm.getFirstName();
         Gender gender = suggestionForm.getGender();
-        System.out.println("savePerson   gender from form " + gender);
         PlayerLevel level = suggestionForm.getLevel();
+        Schedule schedule = suggestionForm.getSchedule();
+        System.out.println("schedule " + schedule + "   intervals Str " + schedule.getIntervalsByDay1());
         if (firstName != null && !firstName.isEmpty()
-                && gender != null && level != null) {
+                && gender != null && level != null && !schedule.isEmpty()) {
             Player pl = new Player(firstName, gender, level);
-            Schedule sh1 = new Schedule();
-            suggestions.add(new Suggestion(pl, sh1));
+            suggestions.add(new Suggestion(pl, schedule));
             return "redirect:/suggestions";
         }
         model.addAttribute("errorMessage", errorMessage);
