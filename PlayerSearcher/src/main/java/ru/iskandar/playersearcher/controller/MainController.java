@@ -19,6 +19,7 @@ public class MainController {
     private static List<Suggestion> suggestions = new ArrayList<>();
 
     static {
+        //FIXME вынести из кода
         Player pl1 = new Player("Антон", Gender.MALE, PlayerLevel.PROFESSIONAL);
         Player pl2 = new Player("Инга", Gender.FEMALE, PlayerLevel.AMATEUR);
         Schedule sh1 = new Schedule();
