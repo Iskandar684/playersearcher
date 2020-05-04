@@ -86,4 +86,14 @@ public class MainController {
         return "addSuggestion";
     }
 
+    @RequestMapping("/login")
+    public String login() {
+        return "login";
+    }
+
+    @RequestMapping({ "/index", "/" })
+    public String index() {
+        return "index";
+    }
+
 }
