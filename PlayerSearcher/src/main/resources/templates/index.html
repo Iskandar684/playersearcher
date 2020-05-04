@@ -8,7 +8,8 @@
 <body>
 
 <div align="right">
-    <a th:href="@{/logout}">Выйти</a>
+    <label th:utext="${userName}"></label>
+    <div><a th:href="@{/logout}">Выйти</a></div>
 </div>
 
 <h1 style="text-align:center">Добро пожаловать в сервис поиска игроков в настольный теннис!</h1>
@@ -23,7 +24,7 @@
    -->
 
 <div align="center">
-     <a th:href="@{/suggestions}">Найти игрока</a>
+    <a th:href="@{/suggestions}">Найти игрока</a>
 </div>
 
 </body>

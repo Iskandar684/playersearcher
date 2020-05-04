@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import ru.iskandar.playersearcher.form.SuggestionForm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -41,6 +44,9 @@ public class MainController {
     @RequestMapping(value = {"/", "/index"}, method = RequestMethod.GET)
     public String index(Model model) {
         model.addAttribute("message", message);
+        SecurityContext context = SecurityContextHolder.getContext();
+        UserDetails principal = (UserDetails) context.getAuthentication().getPrincipal();
+        model.addAttribute("userName", principal.getUsername());
         return "index";
     }
 
@@ -91,7 +97,7 @@ public class MainController {
         return "login";
     }
 
-    @RequestMapping({ "/index", "/" })
+    @RequestMapping({"/index", "/"})
     public String index() {
         return "index";
     }
