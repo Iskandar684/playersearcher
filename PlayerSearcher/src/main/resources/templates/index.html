@@ -6,6 +6,11 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 </head>
 <body>
+
+<div align="right">
+    <a th:href="@{/logout}">Выйти</a>
+</div>
+
 <h1 style="text-align:center">Добро пожаловать в сервис поиска игроков в настольный теннис!</h1>
 <!--<h2 th:utext="${message}">..!..</h2>-->
 
@@ -17,11 +22,10 @@
 
    -->
 
-<!--<a th:href="@{/personList}">Найти игрока</a>-->
 <div align="center">
-    <!--<button th:href="@{/personList}">Найти игрока</button>-->
-    <a th:href="@{/suggestions}">Найти игрока</a>
+     <a th:href="@{/suggestions}">Найти игрока</a>
 </div>
+
 </body>
 
 </html>
