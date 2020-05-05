@@ -102,4 +102,32 @@ public class MainController {
         return "index";
     }
 
+    @RequestMapping(value = {"/registration"}, method = RequestMethod.GET)
+    public String registration(Model model) {
+        NewUser newUser = new NewUser();
+        model.addAttribute("newUser", newUser);
+        return "registration";
+    }
+
+
+    @RequestMapping(value = {"/registration"}, method = RequestMethod.POST)
+    public String createNewUser(Model model, @ModelAttribute("newUser") NewUser aNewUser) {
+
+        System.out.println("createNewUser "+aNewUser.getLogin());
+        //
+        if (aNewUser.isEmpty()) {
+            model.addAttribute("errorMessage",errorMessage);
+        } else if (!aNewUser.passwordsIsMatch()) {
+            model.addAttribute("errorMessage", "Пароли не совпадают.");
+        } else {
+            return "redirect:/registrationSuccess";
+        }
+        return "registration";
+    }
+
+    @RequestMapping(value = {"/registrationSuccess"}, method = RequestMethod.GET)
+    public String registrationSuccess() {
+             return "registrationSuccess";
+    }
+
 }
