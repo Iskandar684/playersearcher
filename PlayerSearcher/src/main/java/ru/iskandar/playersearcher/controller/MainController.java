@@ -125,6 +125,7 @@ public class MainController {
         }else {
             Player player = new Player("name", Gender.MALE,PlayerLevel.AMATEUR );
             player.setLogin(aNewUser.getLogin());
+            player.setPassword(aNewUser.getPassword());
             PlayersRepo.getInstance().addPlayer(player);
             return "redirect:/registrationSuccess";
         }

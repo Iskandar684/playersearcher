@@ -2,10 +2,7 @@ package ru.iskandar.playersearcher.repo;
 
 import ru.iskandar.playersearcher.model.Player;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class PlayersRepo {
 
@@ -31,5 +28,9 @@ public class PlayersRepo {
 
     public boolean hasPlayerByLogin(String aLogin){
         return _players.stream().anyMatch(player -> Objects.equals(aLogin, player.getLogin()));
+    }
+
+    public Optional<Player> findPlayerByLogin(String aLogin){
+        return _players.stream().filter(player -> Objects.equals(aLogin, player.getLogin())).findFirst();
     }
 }
