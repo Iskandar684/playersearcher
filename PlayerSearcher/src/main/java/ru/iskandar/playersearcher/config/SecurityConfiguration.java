@@ -9,6 +9,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import ru.iskandar.playersearcher.model.Player;
+import ru.iskandar.playersearcher.repo.PlayersRepo;
+
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -35,6 +39,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        System.out.println("configureGlobal ");
         auth.inMemoryAuthentication()
                 .withUser("user")
                 .password(passwordEncoder().encode("password"))
@@ -43,10 +48,19 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .withUser("admin")
                 .password(passwordEncoder().encode("admin"))
                 .roles("ADMIN");
+        List<Player> players = PlayersRepo.getInstance().getPlayers();
+        for (Player player : players) {
+            auth.inMemoryAuthentication()
+                    .withUser(player.getLogin())
+                    .password(passwordEncoder().encode(player.getPassword()))
+                    .roles("USER");
+        }
     }
 
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
 }

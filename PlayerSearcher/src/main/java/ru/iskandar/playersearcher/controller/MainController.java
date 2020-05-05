@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import ru.iskandar.playersearcher.model.*;
+import ru.iskandar.playersearcher.repo.PlayersRepo;
 
 @Controller
 public class MainController {
@@ -119,7 +120,12 @@ public class MainController {
             model.addAttribute("errorMessage",errorMessage);
         } else if (!aNewUser.passwordsIsMatch()) {
             model.addAttribute("errorMessage", "Пароли не совпадают.");
-        } else {
+        } else if ( PlayersRepo.getInstance().hasPlayerByLogin(aNewUser.getLogin())){
+            model.addAttribute("errorMessage", "Игрок с указанным логином уже зарегистрирован в системе.");
+        }else {
+            Player player = new Player("name", Gender.MALE,PlayerLevel.AMATEUR );
+            player.setLogin(aNewUser.getLogin());
+            PlayersRepo.getInstance().addPlayer(player);
             return "redirect:/registrationSuccess";
         }
         return "registration";

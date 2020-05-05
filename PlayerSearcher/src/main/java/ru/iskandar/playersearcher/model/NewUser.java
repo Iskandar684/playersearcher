@@ -23,7 +23,7 @@ public class NewUser {
     }
 
     public void setPassword(String aPassword) {
-        this._login = aPassword;
+        this._password = aPassword;
     }
 
     public String getPasswordConfirm() {
