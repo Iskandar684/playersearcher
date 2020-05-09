@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import ru.iskandar.playersearcher.form.SuggestionForm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -21,6 +23,9 @@ import ru.iskandar.playersearcher.repo.PlayersRepo;
 public class MainController {
 
     private static List<Suggestion> suggestions = new ArrayList<>();
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     static {
         //FIXME вынести из кода
@@ -113,19 +118,18 @@ public class MainController {
 
     @RequestMapping(value = {"/registration"}, method = RequestMethod.POST)
     public String createNewUser(Model model, @ModelAttribute("newUser") NewUser aNewUser) {
+        System.out.println("createNewUser " + aNewUser.getLogin());
 
-        System.out.println("createNewUser "+aNewUser.getLogin());
-        //
         if (aNewUser.isEmpty()) {
-            model.addAttribute("errorMessage",errorMessage);
+            model.addAttribute("errorMessage", errorMessage);
         } else if (!aNewUser.passwordsIsMatch()) {
             model.addAttribute("errorMessage", "Пароли не совпадают.");
-        } else if ( PlayersRepo.getInstance().hasPlayerByLogin(aNewUser.getLogin())){
+        } else if (PlayersRepo.getInstance().hasPlayerByLogin(aNewUser.getLogin())) {
             model.addAttribute("errorMessage", "Игрок с указанным логином уже зарегистрирован в системе.");
-        }else {
-            Player player = new Player("name", Gender.MALE,PlayerLevel.AMATEUR );
+        } else {
+            Player player = new Player("name", Gender.MALE, PlayerLevel.AMATEUR);
             player.setLogin(aNewUser.getLogin());
-            player.setPassword(aNewUser.getPassword());
+            player.setPassword(passwordEncoder.encode(aNewUser.getPassword()));
             PlayersRepo.getInstance().addPlayer(player);
             return "redirect:/registrationSuccess";
         }
@@ -134,7 +138,7 @@ public class MainController {
 
     @RequestMapping(value = {"/registrationSuccess"}, method = RequestMethod.GET)
     public String registrationSuccess() {
-             return "registrationSuccess";
+        return "registrationSuccess";
     }
 
 }
