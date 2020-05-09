@@ -21,7 +21,9 @@ public class Player implements UserDetails {
 
     private List<Role> _roles = Collections.singletonList(new Role("USER"));
 
-    public Player(String aName, Gender aGender, PlayerLevel aLevel) {
+    public Player(String aLogin, String aPassword, String aName, Gender aGender, PlayerLevel aLevel) {
+        _login = aLogin;
+        _password = aPassword;
         this.name = aName;
         this._gender = aGender;
         this._level = aLevel;

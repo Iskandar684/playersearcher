@@ -3,6 +3,7 @@ package ru.iskandar.playersearcher.controller;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
@@ -18,26 +19,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import ru.iskandar.playersearcher.model.*;
 import ru.iskandar.playersearcher.repo.PlayersRepo;
+import ru.iskandar.playersearcher.repo.SuggestionsRepo;
 
 @Controller
 public class MainController {
 
-    private static List<Suggestion> suggestions = new ArrayList<>();
-
-    @Autowired
+   @Autowired
     private PasswordEncoder passwordEncoder;
-
-    static {
-        //FIXME вынести из кода
-        Player pl1 = new Player("Антон", Gender.MALE, PlayerLevel.PROFESSIONAL);
-        Player pl2 = new Player("Инга", Gender.FEMALE, PlayerLevel.AMATEUR);
-        Schedule sh1 = new Schedule();
-        sh1.setIntervalsByDay6(Collections.singletonList(new HourInterval(18, 19).toString()));
-        Schedule sh2 = new Schedule();
-        sh2.setIntervalsByDay7(Collections.singletonList(new HourInterval(16, 17).toString()));
-        suggestions.add(new Suggestion(pl1, sh1));
-        suggestions.add(new Suggestion(pl2, sh2));
-    }
 
     // ​​​​​​​
     // Вводится (inject) из application.properties.
@@ -50,15 +38,20 @@ public class MainController {
     @RequestMapping(value = {"/", "/index"}, method = RequestMethod.GET)
     public String index(Model model) {
         model.addAttribute("message", message);
+        model.addAttribute("userName", getCurrentUser().getName());
+        return "index";
+    }
+
+    private  Player getCurrentUser(){
         SecurityContext context = SecurityContextHolder.getContext();
         UserDetails principal = (UserDetails) context.getAuthentication().getPrincipal();
-        model.addAttribute("userName", principal.getUsername());
-        return "index";
+        Optional<Player> player=  PlayersRepo.getInstance().findPlayerByLogin(principal.getUsername());
+        return player.orElseThrow(() ->new IllegalStateException("Не определен текущий пользователь."));
     }
 
     @RequestMapping(value = {"/suggestions"}, method = RequestMethod.GET)
     public String getSuggestions(Model model) {
-        model.addAttribute("suggestions", suggestions);
+        model.addAttribute("suggestions", SuggestionsRepo.getInstance().getSuggestions());
         return "suggestions";
     }
 
@@ -88,10 +81,8 @@ public class MainController {
         PlayerLevel level = suggestionForm.getLevel();
         Schedule schedule = suggestionForm.getSchedule();
         System.out.println("schedule " + schedule + "   intervals Str " + schedule.getIntervalsByDay1());
-        if (firstName != null && !firstName.isEmpty()
-                && gender != null && level != null && !schedule.isEmpty()) {
-            Player pl = new Player(firstName, gender, level);
-            suggestions.add(new Suggestion(pl, schedule));
+        if (!schedule.isEmpty()) {
+            SuggestionsRepo.getInstance().addSuggestion(new Suggestion(getCurrentUser(), schedule));
             return "redirect:/suggestions";
         }
         model.addAttribute("errorMessage", errorMessage);
@@ -127,9 +118,8 @@ public class MainController {
         } else if (PlayersRepo.getInstance().hasPlayerByLogin(aNewUser.getLogin())) {
             model.addAttribute("errorMessage", "Игрок с указанным логином уже зарегистрирован в системе.");
         } else {
-            Player player = new Player("name", Gender.MALE, PlayerLevel.AMATEUR);
-            player.setLogin(aNewUser.getLogin());
-            player.setPassword(passwordEncoder.encode(aNewUser.getPassword()));
+            String password = passwordEncoder.encode(aNewUser.getPassword());
+            Player player = new Player(aNewUser.getLogin(),password,"name", Gender.MALE, PlayerLevel.AMATEUR);
             PlayersRepo.getInstance().addPlayer(player);
             return "redirect:/registrationSuccess";
         }
