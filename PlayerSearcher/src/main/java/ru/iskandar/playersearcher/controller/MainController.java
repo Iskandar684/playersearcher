@@ -55,35 +55,37 @@ public class MainController {
     @RequestMapping(value = {"/addSuggestion"}, method = RequestMethod.GET)
     public String showAddSuggestionPage(Model model) {
         SuggestionForm suggestionForm = new SuggestionForm();
-        List<Gender> genders = new ArrayList<>();
-        genders.add(Gender.MALE);
-        genders.add(Gender.FEMALE);
-        model.addAttribute("genders", genders);
-        model.addAttribute("suggestionForm", suggestionForm);
-        List<PlayerLevel> levels = new ArrayList<>();
-        levels.add(PlayerLevel.AMATEUR);
-        levels.add(PlayerLevel.PROFESSIONAL);
-        model.addAttribute("levels", levels);
-
-        List<HourInterval> intervals = new HourIntervalFactory().create();
-        model.addAttribute("intervals", intervals);
+        Optional<Suggestion> suggestionOpt = SuggestionsRepo.getInstance().findByLogin(getCurrentUser().getLogin());
+        suggestionOpt.ifPresent(suggestion -> suggestionForm.setSchedule(suggestion.getSchedule()));
+        fillEditSuggestionModel(model, suggestionForm);
         return "addSuggestion";
     }
 
     @RequestMapping(value = {"/addSuggestion"}, method = RequestMethod.POST)
     public String saveSuggestion(Model model,
-                                 @ModelAttribute("suggestionForm") SuggestionForm suggestionForm) {
-        String firstName = suggestionForm.getFirstName();
-        Gender gender = suggestionForm.getGender();
-        PlayerLevel level = suggestionForm.getLevel();
-        Schedule schedule = suggestionForm.getSchedule();
+                                 @ModelAttribute("suggestionForm") SuggestionForm aSuggestionForm) {
+        Schedule schedule = aSuggestionForm.getSchedule();
         System.out.println("schedule " + schedule + "   intervals Str " + schedule.getIntervalsByDay1());
-        if (!schedule.isEmpty()) {
-            SuggestionsRepo.getInstance().addSuggestion(new Suggestion(getCurrentUser(), schedule));
-            return "redirect:/suggestions";
+        if (schedule.isEmpty()) {
+            model.addAttribute("errorMessage", errorMessage);
+            fillEditSuggestionModel(model, aSuggestionForm);
+            return "addSuggestion";
         }
-        model.addAttribute("errorMessage", errorMessage);
-        return "addSuggestion";
+        Player player = getCurrentUser();
+        Optional<Suggestion> suggestionOpt = SuggestionsRepo.getInstance().findByLogin(player.getLogin());
+        if (suggestionOpt.isPresent()){
+            suggestionOpt.get().setSchedule(schedule);
+        }else{
+            SuggestionsRepo.getInstance().addSuggestion(new Suggestion(player, schedule));
+        }
+        return "redirect:/suggestions";
+    }
+
+    private void fillEditSuggestionModel(Model model, SuggestionForm aSuggestionForm) {
+        model.addAttribute("suggestionForm", aSuggestionForm);
+        List<HourInterval> intervals = new HourIntervalFactory().create();
+        model.addAttribute("intervals", intervals);
+        model.addAttribute("userName", getCurrentUser().getName());
     }
 
     @RequestMapping("/login")

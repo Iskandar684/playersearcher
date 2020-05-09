@@ -5,14 +5,15 @@ import ru.iskandar.playersearcher.model.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 public class SuggestionsRepo {
 
-    private  List<Suggestion> suggestions = new ArrayList<>();
+    private List<Suggestion> suggestions = new ArrayList<>();
 
     private static SuggestionsRepo INSTANCE = new SuggestionsRepo();
 
-    private SuggestionsRepo(){
+    private SuggestionsRepo() {
         Player pl1 = PlayersRepo.getInstance().findPlayerByLogin("anton").orElse(null);
         Player pl2 = PlayersRepo.getInstance().findPlayerByLogin("inga").orElse(null);
         Schedule sh1 = new Schedule();
@@ -23,16 +24,20 @@ public class SuggestionsRepo {
         suggestions.add(new Suggestion(pl2, sh2));
     }
 
-    public  static  SuggestionsRepo getInstance(){
+    public static SuggestionsRepo getInstance() {
         return INSTANCE;
     }
 
-    public List<Suggestion> getSuggestions(){
+    public List<Suggestion> getSuggestions() {
         return Collections.unmodifiableList(suggestions);
     }
 
-    public  void addSuggestion(Suggestion aSuggestion){
+    public void addSuggestion(Suggestion aSuggestion) {
         suggestions.add(aSuggestion);
+    }
+
+    public Optional<Suggestion> findByLogin(String aLogin) {
+        return suggestions.stream().filter(suggestion -> suggestion.getPlayer().getLogin().equals(aLogin)).findFirst();
     }
 
 

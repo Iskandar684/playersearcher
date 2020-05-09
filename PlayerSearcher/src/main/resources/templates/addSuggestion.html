@@ -2,74 +2,50 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Добавление игрока</title>
+    <title>Указание графика</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 </head>
 <body>
-<h1>Добавление игрока</h1>
+<div style="text-align:center">
+    <h3><span th:text="${userName}"></span>, пожалуйста, укажите удобный Вам график.</h3>
 
-<!--
-   In Thymeleaf the equivalent of
-   JSP's ${pageContext.request.contextPath}/edit.html
-   would be @{/edit.html}
-   -->
+    <form th:action="@{/addSuggestion}"
+          th:object="${suggestionForm}" method="POST">
+        <div>
+            <table border="1" th:align="center">
+                <tr>
+                    <th>День/Время</th>
+                    <th>Пн</th>
+                    <th>Вт</th>
+                    <th>Ср</th>
+                    <th>Чт</th>
+                    <th>Пт</th>
+                    <th>Сб</th>
+                    <th>Вс</th>
+                </tr>
+                <tr th:each="interval : ${intervals}">
+                    <td th:utext="${interval}">...</td>
+                    <td><input type="checkbox" th:field="*{schedule.intervalsByDay1}" th:value="${interval}"/></td>
+                    <td><input type="checkbox" th:field="*{schedule.intervalsByDay2}" th:value="${interval}"/></td>
+                    <td><input type="checkbox" th:field="*{schedule.intervalsByDay3}" th:value="${interval}"/></td>
+                    <td><input type="checkbox" th:field="*{schedule.intervalsByDay4}" th:value="${interval}"/></td>
+                    <td><input type="checkbox" th:field="*{schedule.intervalsByDay5}" th:value="${interval}"/></td>
+                    <td><input type="checkbox" th:field="*{schedule.intervalsByDay6}" th:value="${interval}"/></td>
+                    <td><input type="checkbox" th:field="*{schedule.intervalsByDay7}" th:value="${interval}"/></td>
+                </tr>
+            </table>
+        </div>
 
-<form th:action="@{/addSuggestion}"
-      th:object="${suggestionForm}" method="POST">
-    Имя:
-    <input type="text" th:field="*{firstName}"/>
-    <br/>
-    Пол:
-    <div th:each="gender : ${genders}">
-        <input type="radio" th:field="*{gender}" th:value="${gender}"/>
-        <label th:for="${genders}" th:text="${gender}"></label>
-    </div>
-    Уровень:
-    <div>
-        <select th:field="*{level}">
-            <option th:each="level : ${levels}"
-                    th:value="${level}"
-                    th:text="${level}"></option>
-        </select>
-    </div>
-    График:
-    <div>
-        <table border="1">
-            <tr>
-                <th></th>
-                <th>Пн</th>
-                <th>Вт</th>
-                <th>Ср</th>
-                <th>Чт</th>
-                <th>Пт</th>
-                <th>Сб</th>
-                <th>Вс</th>
-            </tr>
-            <tr th:each="interval : ${intervals}">
-                <td th:utext="${interval}">...</td>
-                <td><input type="checkbox" th:field="*{schedule.intervalsByDay1}" th:value="${interval}"/></td>
-                <td><input type="checkbox" th:field="*{schedule.intervalsByDay2}" th:value="${interval}"/></td>
-                <td><input type="checkbox" th:field="*{schedule.intervalsByDay3}" th:value="${interval}"/></td>
-                <td><input type="checkbox" th:field="*{schedule.intervalsByDay4}" th:value="${interval}"/></td>
-                <td><input type="checkbox" th:field="*{schedule.intervalsByDay5}" th:value="${interval}"/></td>
-                <td><input type="checkbox" th:field="*{schedule.intervalsByDay6}" th:value="${interval}"/></td>
-                <td><input type="checkbox" th:field="*{schedule.intervalsByDay7}" th:value="${interval}"/></td>
-            </tr>
-        </table>
-    </div>
+        <br/>
+        <input type="submit" value="Сохранить"/>
+    </form>
 
     <br/>
-    <input type="submit" value="Добавить"/>
-</form>
 
-<br/>
-
-<!-- Check if errorMessage is not null and not empty -->
-
-<div th:if="${errorMessage}" th:utext="${errorMessage}"
-     style="color:red;font-style:italic;">
-    ...
+    <div th:if="${errorMessage}" th:utext="${errorMessage}"
+         style="color:red;font-style:italic;">
+        ...
+    </div>
 </div>
-
 </body>
 </html>

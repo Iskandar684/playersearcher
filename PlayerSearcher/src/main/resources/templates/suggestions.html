@@ -6,24 +6,26 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 </head>
 <body>
-<h1>Список игроков в настольный теннис</h1>
-<a href="addSuggestion">Добавить игрока</a>
-<br/><br/>
-<div>
-    <table border="1">
-        <tr>
-            <th>Имя</th>
-            <th>Пол</th>
-            <th>Уровень</th>
-            <th>График</th>
-        </tr>
-        <tr th:each="suggestion : ${suggestions}">
-            <td th:utext="${suggestion.getPlayer().getName()}">...</td>
-            <td align="center" th:utext="${suggestion.getPlayer().getGender()}">...</td>
-            <td th:utext="${suggestion.getPlayer().getLevel()}">...</td>
-            <td th:utext="${suggestion.getSchedule()}">...</td>
-        </tr>
-    </table>
+<div style="text-align:center">
+    <h1>Список игроков в настольный теннис</h1>
+    <a href="addSuggestion">Указать свой график</a>
+    <br/><br/>
+    <div>
+        <table border="1" th:align="center">
+            <tr>
+                <th>Имя</th>
+                <th>Пол</th>
+                <th>Уровень</th>
+                <th>График</th>
+            </tr>
+            <tr th:each="suggestion : ${suggestions}">
+                <td th:utext="${suggestion.getPlayer().getName()}">...</td>
+                <td align="center" th:utext="${suggestion.getPlayer().getGender()}">...</td>
+                <td th:utext="${suggestion.getPlayer().getLevel()}">...</td>
+                <td th:utext="${suggestion.getSchedule()}">...</td>
+            </tr>
+        </table>
+    </div>
 </div>
 </body>
 </html>
