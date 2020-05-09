@@ -1,5 +1,7 @@
 package ru.iskandar.playersearcher.model;
 
+import lombok.*;
+import lombok.experimental.Accessors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -7,59 +9,28 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
+@Accessors(prefix = "_")
+@RequiredArgsConstructor
+@EqualsAndHashCode(of = "_login")
 public class Player implements UserDetails {
 
-    private String _login;
+    @NonNull
+    private final String _login;
 
-    private String _password;
+    @NonNull
+    private final String _password;
 
-    private String name;
+    @NonNull
+    private final String _name;
 
-    private Gender _gender;
+    @NonNull
+    private final Gender _gender;
 
-    private PlayerLevel _level;
+    @NonNull
+    private final PlayerLevel _level;
 
-    private List<Role> _roles = Collections.singletonList(new Role("USER"));
-
-    public Player(String aLogin, String aPassword, String aName, Gender aGender, PlayerLevel aLevel) {
-        _login = aLogin;
-        _password = aPassword;
-        this.name = aName;
-        this._gender = aGender;
-        this._level = aLevel;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String aName) {
-        this.name = aName;
-    }
-
-    public Gender getGender() {
-        return _gender;
-    }
-
-    public void setGender(Gender aGender) {
-        _gender = aGender;
-    }
-
-    public PlayerLevel getLevel() {
-        return _level;
-    }
-
-    public void setLevel(PlayerLevel aLevel) {
-        _level = aLevel;
-    }
-
-    public String getLogin() {
-        return _login;
-    }
-
-    public void setLogin(String aLogin) {
-        this._login = aLogin;
-    }
+    private final List<Role> _roles = Collections.singletonList(new Role("USER"));
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -69,10 +40,6 @@ public class Player implements UserDetails {
     @Override
     public String getPassword() {
         return _password;
-    }
-
-    public void setPassword(String aPassword) {
-        this._password = aPassword;
     }
 
     @Override
@@ -99,6 +66,5 @@ public class Player implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 
 }
