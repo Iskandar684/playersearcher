@@ -35,7 +35,7 @@ public class MainController {
     @RequestMapping(value = {"/", "/index"}, method = RequestMethod.GET)
     public String index(Model model) {
         model.addAttribute("message", message);
-        model.addAttribute("userName", getCurrentUser().getName());
+        addCurrentUserName(model);
         return "index";
     }
 
@@ -49,7 +49,12 @@ public class MainController {
     @RequestMapping(value = {"/suggestions"}, method = RequestMethod.GET)
     public String getSuggestions(Model model) {
         model.addAttribute("suggestions", SuggestionsRepo.getInstance().getSuggestions());
+        addCurrentUserName(model);
         return "suggestions";
+    }
+
+    private void addCurrentUserName(Model model) {
+        model.addAttribute("userName", getCurrentUser().getName());
     }
 
     @RequestMapping(value = {"/addSuggestion"}, method = RequestMethod.GET)
@@ -73,9 +78,9 @@ public class MainController {
         }
         Player player = getCurrentUser();
         Optional<Suggestion> suggestionOpt = SuggestionsRepo.getInstance().findByLogin(player.getLogin());
-        if (suggestionOpt.isPresent()){
+        if (suggestionOpt.isPresent()) {
             suggestionOpt.get().setSchedule(schedule);
-        }else{
+        } else {
             SuggestionsRepo.getInstance().addSuggestion(new Suggestion(player, schedule));
         }
         return "redirect:/suggestions";
@@ -85,7 +90,8 @@ public class MainController {
         model.addAttribute("suggestionForm", aSuggestionForm);
         List<HourInterval> intervals = new HourIntervalFactory().create();
         model.addAttribute("intervals", intervals);
-        model.addAttribute("userName", getCurrentUser().getName());
+        addCurrentUserName(model);
+
     }
 
     @RequestMapping("/login")

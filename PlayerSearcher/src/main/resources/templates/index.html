@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8"/>
-    <title>Welcome</title>
+    <title>Добро пожаловать</title>
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 </head>
 <body>
@@ -12,8 +12,7 @@
     <div><a th:href="@{/logout}">Выйти</a></div>
 </div>
 
-<h1 style="text-align:center">Добро пожаловать в сервис поиска игроков в настольный теннис!</h1>
-<!--<h2 th:utext="${message}">..!..</h2>-->
+<h1 style="text-align:center"><span th:text="${userName}"></span>, добро пожаловать в сервис поиска игроков в настольный теннис!</h1>
 
 <!--
 

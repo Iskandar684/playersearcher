@@ -6,6 +6,11 @@
     <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
 </head>
 <body>
+<div align="right">
+    <label th:utext="${userName}"></label>
+    <div><a th:href="@{/logout}">Выйти</a></div>
+</div>
+
 <div style="text-align:center">
     <h3><span th:text="${userName}"></span>, пожалуйста, укажите удобный Вам график.</h3>
 
