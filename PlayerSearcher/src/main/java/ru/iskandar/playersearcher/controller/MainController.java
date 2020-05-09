@@ -1,9 +1,6 @@
 package ru.iskandar.playersearcher.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
@@ -24,7 +21,7 @@ import ru.iskandar.playersearcher.repo.SuggestionsRepo;
 @Controller
 public class MainController {
 
-   @Autowired
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     // ​​​​​​​
@@ -42,11 +39,11 @@ public class MainController {
         return "index";
     }
 
-    private  Player getCurrentUser(){
+    private Player getCurrentUser() {
         SecurityContext context = SecurityContextHolder.getContext();
         UserDetails principal = (UserDetails) context.getAuthentication().getPrincipal();
-        Optional<Player> player=  PlayersRepo.getInstance().findPlayerByLogin(principal.getUsername());
-        return player.orElseThrow(() ->new IllegalStateException("Не определен текущий пользователь."));
+        Optional<Player> player = PlayersRepo.getInstance().findPlayerByLogin(principal.getUsername());
+        return player.orElseThrow(() -> new IllegalStateException("Не определен текущий пользователь."));
     }
 
     @RequestMapping(value = {"/suggestions"}, method = RequestMethod.GET)
@@ -101,8 +98,7 @@ public class MainController {
 
     @RequestMapping(value = {"/registration"}, method = RequestMethod.GET)
     public String registration(Model model) {
-        NewUser newUser = new NewUser();
-        model.addAttribute("newUser", newUser);
+        fillRegistrationModel(model, new NewUser());
         return "registration";
     }
 
@@ -110,7 +106,7 @@ public class MainController {
     @RequestMapping(value = {"/registration"}, method = RequestMethod.POST)
     public String createNewUser(Model model, @ModelAttribute("newUser") NewUser aNewUser) {
         System.out.println("createNewUser " + aNewUser.getLogin());
-
+        fillRegistrationModel(model, aNewUser);
         if (aNewUser.isEmpty()) {
             model.addAttribute("errorMessage", errorMessage);
         } else if (!aNewUser.passwordsIsMatch()) {
@@ -118,12 +114,17 @@ public class MainController {
         } else if (PlayersRepo.getInstance().hasPlayerByLogin(aNewUser.getLogin())) {
             model.addAttribute("errorMessage", "Игрок с указанным логином уже зарегистрирован в системе.");
         } else {
-            String password = passwordEncoder.encode(aNewUser.getPassword());
-            Player player = new Player(aNewUser.getLogin(),password,"name", Gender.MALE, PlayerLevel.AMATEUR);
+            Player player = new PlayerFactory(passwordEncoder).createPlayer(aNewUser);
             PlayersRepo.getInstance().addPlayer(player);
             return "redirect:/registrationSuccess";
         }
         return "registration";
+    }
+
+    private void fillRegistrationModel(Model model, NewUser aNewUser) {
+        model.addAttribute("newUser", aNewUser);
+        model.addAttribute("genders", Gender.values());
+        model.addAttribute("levels", PlayerLevel.values());
     }
 
     @RequestMapping(value = {"/registrationSuccess"}, method = RequestMethod.GET)

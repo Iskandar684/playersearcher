@@ -1,9 +1,6 @@
 package ru.iskandar.playersearcher.model;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.util.Objects;
@@ -19,10 +16,19 @@ public class NewUser {
 
     private String _passwordConfirm;
 
+    private String _name;
+
+    private Gender _gender;
+
+    private PlayerLevel _level;
+
     public boolean isEmpty() {
         boolean isEmpty = _login == null || _login.isEmpty();
         isEmpty = isEmpty || _password == null || _password.isEmpty();
         isEmpty = isEmpty || _passwordConfirm == null || _passwordConfirm.isEmpty();
+        isEmpty = isEmpty || _name == null || _name.isEmpty();
+        isEmpty = isEmpty || _gender == null ;
+        isEmpty = isEmpty || _level == null ;
         return isEmpty;
     }
 

@@ -14,6 +14,26 @@
     <form th:action="@{/registration}" th:object="${newUser}" method="post">
         <table th:align="center">
             <tr>
+                <td th:align="right"><label>Имя:</label></td>
+                <td><input type="text" th:field="*{name}"></td>
+            </tr>
+            <tr>
+                <td th:align="right"><label>Пол:</label></td>
+                <td><select style="width:100%" th:field="*{gender}">
+                    <option th:each="gender : ${genders}"
+                            th:value="${gender}"
+                            th:text="${gender}"></option>
+                </select></td>
+            </tr>
+            <tr>
+                <td th:align="right"><label>Уровень:</label></td>
+                <td><select style="width:100%" th:field="*{level}">
+                    <option th:each="level : ${levels}"
+                            th:value="${level}"
+                            th:text="${level}"></option>
+                </select></td>
+            </tr>
+            <tr>
                 <td th:align="right"><label>Логин:</label></td>
                 <td><input type="text" th:field="*{login}"/></td>
             </tr>

@@ -1,15 +1,22 @@
 package ru.iskandar.playersearcher.model;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Пол.
  */
 public class Gender {
 
-    /**   М  */
-    public static Gender MALE = new Gender("M");
+    /**
+     * Мужчина
+     */
+    public static Gender MALE = new Gender("Мужчина");
 
-    /** Ж  */
-    public static Gender FEMALE = new Gender("Ж");
+    /**
+     * Женщина
+     */
+    public static Gender FEMALE = new Gender("Женщина");
 
     private String _text;
 
@@ -17,6 +24,10 @@ public class Gender {
     public Gender(String aText) {
         //Нужен публичный конструктор. Поэтому enum не подходит.
         _text = aText;
+    }
+
+    public static List<Gender> values() {
+        return Arrays.asList(MALE, FEMALE);
     }
 
     @Override
