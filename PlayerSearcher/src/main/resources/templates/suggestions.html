@@ -12,6 +12,21 @@
 </div>
 <div style="text-align:center">
     <h1>Список игроков в настольный теннис</h1>
+    <div align="right">
+        <h4>Критерии поиска:</h4>
+        <form th:action="@{/searchPlayers}"
+              th:object="${playersSearchParams}" method="POST">
+            <div>
+                <select th:field="*{countryId}">
+                    <option th:each="country: ${countries}"
+                            th:value="${country}"
+                            th:text="${country.getText()}"/>
+                </select>
+            </div>
+            <br/>
+            <input type="submit" value="Найти"/>
+        </form>
+    </div>
     <a href="addSuggestion">Указать свой график</a>
     <br/><br/>
     <div>

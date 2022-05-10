@@ -19,6 +19,15 @@ public class PlayersRepo {
 
     private PasswordEncoder passwordEncoder = new Pbkdf2PasswordEncoder();
 
+    public PlayersRepo() {
+        Player pl1 = new Player("anton", passwordEncoder.encode("anton"), "Антон", Gender.MALE, PlayerLevel.PROFESSIONAL);
+        Player pl2 = new Player("inga", passwordEncoder.encode("inga"), "Инга", Gender.FEMALE, PlayerLevel.AMATEUR);
+        Player pl3 = new Player("isk", passwordEncoder.encode("isk"), "Искандар", Gender.MALE, PlayerLevel.AMATEUR);
+        _players.add(pl1);
+        _players.add(pl2);
+        _players.add(pl3);
+    }
+
     public List<Player> getPlayers() {
         return Collections.unmodifiableList(_players);
     }

@@ -1,6 +1,7 @@
 package ru.iskandar.playersearcher.controller;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContext;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import ru.iskandar.playersearcher.model.*;
 import ru.iskandar.playersearcher.repo.PlayersRepo;
+import ru.iskandar.playersearcher.repo.PlayersSearchParamsRepo;
 import ru.iskandar.playersearcher.repo.SuggestionsRepo;
 
 @Controller
@@ -48,9 +50,20 @@ public class MainController {
 
     @RequestMapping(value = {"/suggestions"}, method = RequestMethod.GET)
     public String getSuggestions(Model model) {
-        model.addAttribute("suggestions", SuggestionsRepo.getInstance().getSuggestions());
+        PlayersSearchParams searchParams = PlayersSearchParamsRepo.INSTANCE.getParams(getCurrentUser().getLogin());
+        List<Suggestion> suggestions = SuggestionsRepo.getInstance().getSuggestions();
+        suggestions = suggestions.stream().filter(suggestion -> filter(suggestion, searchParams)).collect(Collectors.toList());
+        model.addAttribute("suggestions", suggestions);
         addCurrentUserName(model);
+        List<Gender> list = Gender.values();
+        model.addAttribute("countries", list);
+        model.addAttribute("playersSearchParams", searchParams);
         return "suggestions";
+    }
+
+    private boolean filter(Suggestion aSuggestion, PlayersSearchParams searchParams) {
+        boolean res = searchParams.getCountryId() == null || aSuggestion.getPlayer().getGender().equals(searchParams.getCountryId());
+        return res;
     }
 
     private void addCurrentUserName(Model model) {
@@ -83,6 +96,13 @@ public class MainController {
         } else {
             SuggestionsRepo.getInstance().addSuggestion(new Suggestion(player, schedule));
         }
+        return "redirect:/suggestions";
+    }
+
+    @RequestMapping(value = {"/searchPlayers"}, method = RequestMethod.POST)
+    public String searchPlayers(Model model,
+                                @ModelAttribute("playersSearchParams") PlayersSearchParams searchParams) {
+        PlayersSearchParamsRepo.INSTANCE.setParams(getCurrentUser().getLogin(), searchParams);
         return "redirect:/suggestions";
     }
 
@@ -139,5 +159,6 @@ public class MainController {
     public String registrationSuccess() {
         return "registrationSuccess";
     }
+
 
 }

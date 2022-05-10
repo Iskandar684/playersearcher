@@ -1,11 +1,18 @@
 package ru.iskandar.playersearcher.model;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.experimental.Accessors;
+
 import java.util.Arrays;
 import java.util.List;
 
 /**
  * Пол.
  */
+@Getter
+@Accessors(prefix = "_")
+@EqualsAndHashCode(of = "_text")
 public class Gender {
 
     /**
