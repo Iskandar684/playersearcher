@@ -34,5 +34,9 @@ public class PlayerLevel {
 	public String toString() {
 		return _text;
 	}
+	
+	public boolean isNone () {
+		return ModelConstants.NONE_PARAMS_ID.equals(_text) ;
+	}
 
 }

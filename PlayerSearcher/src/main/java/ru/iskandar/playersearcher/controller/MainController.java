@@ -65,11 +65,12 @@ public class MainController {
 	private boolean filter(Suggestion aSuggestion, PlayersSearchParams aSearchParams) {
 		Gender gender = aSearchParams.getGender();
 		boolean res = true;
-		if (gender != null) {
+		if (gender != null && !gender.isNone()) {
 			res = gender.equals(aSuggestion.getPlayer().getGender());
 		}
-		if (aSearchParams.getPlayerLevel() != null) {
-			res = res && aSearchParams.getPlayerLevel().equals(aSuggestion.getPlayer().getLevel());
+		PlayerLevel level = aSearchParams.getPlayerLevel();
+		if (level != null && !level.isNone()) {
+			res = res && level.equals(aSuggestion.getPlayer().getLevel());
 		}
 		return res;
 	}

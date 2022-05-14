@@ -36,6 +36,10 @@ public class Gender {
     public static List<Gender> values() {
         return Arrays.asList(MALE, FEMALE);
     }
+    
+	public boolean isNone () {
+		return ModelConstants.NONE_PARAMS_ID.equals(_text) ;
+	}
 
     @Override
     public String toString() {
