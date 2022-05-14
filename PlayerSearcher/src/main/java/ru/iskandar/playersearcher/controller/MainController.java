@@ -57,13 +57,20 @@ public class MainController {
 		model.addAttribute("suggestions", suggestions);
 		addCurrentUserName(model);
 		model.addAttribute("genders", Gender.values());
+		model.addAttribute("playerLevels", PlayerLevel.values());
 		model.addAttribute("playersSearchParams", searchParams);
 		return "suggestions";
 	}
 
-	private boolean filter(Suggestion aSuggestion, PlayersSearchParams searchParams) {
-		Gender gender = searchParams.getGender();
-		boolean res = gender == null || aSuggestion.getPlayer().getGender().equals(gender);
+	private boolean filter(Suggestion aSuggestion, PlayersSearchParams aSearchParams) {
+		Gender gender = aSearchParams.getGender();
+		boolean res = true;
+		if (gender != null) {
+			res = gender.equals(aSuggestion.getPlayer().getGender());
+		}
+		if (aSearchParams.getPlayerLevel() != null) {
+			res = res && aSearchParams.getPlayerLevel().equals(aSuggestion.getPlayer().getLevel());
+		}
 		return res;
 	}
 

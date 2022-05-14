@@ -24,6 +24,13 @@
 					</select>
 				</div>
 				<br />
+				<div>
+					<label>Уровень: </label>
+					<select th:field="*{playerLevel}">
+						<option th:each="playerLevel: ${playerLevels}" th:value="${playerLevel}" th:text="${playerLevel.getText()}" />
+					</select>
+				</div>
+				<br />
 				<input type="submit" value="Найти" />
 			</form>
 		</div>

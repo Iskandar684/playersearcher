@@ -7,5 +7,8 @@ import lombok.Setter;
 @Getter
 public class PlayersSearchParams {
 
-    public Gender gender;
+	public Gender gender;
+
+	public PlayerLevel playerLevel;
+
 }
