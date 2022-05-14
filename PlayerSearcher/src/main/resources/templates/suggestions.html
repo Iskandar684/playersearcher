@@ -1,50 +1,51 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8"/>
-    <title>Список игроков</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+	<meta charset="UTF-8" />
+	<title>Список игроков</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
 </head>
+
 <body>
-<div align="right">
-    <label th:utext="${userName}"></label>
-    <div><a th:href="@{/logout}">Выйти</a></div>
-</div>
-<div style="text-align:center">
-    <h1>Список игроков в настольный теннис</h1>
-    <div align="right">
-        <h4>Критерии поиска:</h4>
-        <form th:action="@{/searchPlayers}"
-              th:object="${playersSearchParams}" method="POST">
-            <div>
-                <select th:field="*{countryId}">
-                    <option th:each="country: ${countries}"
-                            th:value="${country}"
-                            th:text="${country.getText()}"/>
-                </select>
-            </div>
-            <br/>
-            <input type="submit" value="Найти"/>
-        </form>
-    </div>
-    <a href="addSuggestion">Указать свой график</a>
-    <br/><br/>
-    <div>
-        <table border="1" th:align="center">
-            <tr>
-                <th>Имя</th>
-                <th>Пол</th>
-                <th>Уровень</th>
-                <th>График</th>
-            </tr>
-            <tr th:each="suggestion : ${suggestions}">
-                <td th:utext="${suggestion.getPlayer().getName()}">...</td>
-                <td align="center" th:utext="${suggestion.getPlayer().getGender()}">...</td>
-                <td th:utext="${suggestion.getPlayer().getLevel()}">...</td>
-                <td th:utext="${suggestion.getSchedule()}">...</td>
-            </tr>
-        </table>
-    </div>
-</div>
+	<div align="right">
+		<label th:utext="${userName}"></label>
+		<div><a th:href="@{/logout}">Выйти</a></div>
+	</div>
+	<div style="text-align:center">
+		<h1>Список игроков в настольный теннис</h1>
+		<div align="right">
+			<h4>Критерии поиска:</h4>
+			<form th:action="@{/searchPlayers}" th:object="${playersSearchParams}" method="POST">
+				<div>
+					<label>Пол: </label>
+					<select th:field="*{gender}">
+						<option th:each="gender: ${genders}" th:value="${gender}" th:text="${gender.getText()}" />
+					</select>
+				</div>
+				<br />
+				<input type="submit" value="Найти" />
+			</form>
+		</div>
+		<a href="addSuggestion">Указать свой график</a>
+		<br /><br />
+		<div>
+			<table border="1" th:align="center">
+				<tr>
+					<th>Имя</th>
+					<th>Пол</th>
+					<th>Уровень</th>
+					<th>График</th>
+				</tr>
+				<tr th:each="suggestion : ${suggestions}">
+					<td th:utext="${suggestion.getPlayer().getName()}">...</td>
+					<td align="center" th:utext="${suggestion.getPlayer().getGender()}">...</td>
+					<td th:utext="${suggestion.getPlayer().getLevel()}">...</td>
+					<td th:utext="${suggestion.getSchedule()}">...</td>
+				</tr>
+			</table>
+		</div>
+	</div>
 </body>
+
 </html>

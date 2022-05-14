@@ -23,142 +23,139 @@ import ru.iskandar.playersearcher.repo.SuggestionsRepo;
 @Controller
 public class MainController {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
-    // ​​​​​​​
-    // Вводится (inject) из application.properties.
-    @Value("${welcome.message}")
-    private String message;
+	// ​​​​​​​
+	// Вводится (inject) из application.properties.
+	@Value("${welcome.message}")
+	private String message;
 
-    @Value("${error.message}")
-    private String errorMessage;
+	@Value("${error.message}")
+	private String errorMessage;
 
-    @RequestMapping(value = {"/", "/index"}, method = RequestMethod.GET)
-    public String index(Model model) {
-        model.addAttribute("message", message);
-        addCurrentUserName(model);
-        return "index";
-    }
+	@RequestMapping(value = { "/", "/index" }, method = RequestMethod.GET)
+	public String index(Model model) {
+		model.addAttribute("message", message);
+		addCurrentUserName(model);
+		return "index";
+	}
 
-    private Player getCurrentUser() {
-        SecurityContext context = SecurityContextHolder.getContext();
-        UserDetails principal = (UserDetails) context.getAuthentication().getPrincipal();
-        Optional<Player> player = PlayersRepo.getInstance().findPlayerByLogin(principal.getUsername());
-        return player.orElseThrow(() -> new IllegalStateException("Не определен текущий пользователь."));
-    }
+	private Player getCurrentUser() {
+		SecurityContext context = SecurityContextHolder.getContext();
+		UserDetails principal = (UserDetails) context.getAuthentication().getPrincipal();
+		Optional<Player> player = PlayersRepo.getInstance().findPlayerByLogin(principal.getUsername());
+		return player.orElseThrow(() -> new IllegalStateException("Не определен текущий пользователь."));
+	}
 
-    @RequestMapping(value = {"/suggestions"}, method = RequestMethod.GET)
-    public String getSuggestions(Model model) {
-        PlayersSearchParams searchParams = PlayersSearchParamsRepo.INSTANCE.getParams(getCurrentUser().getLogin());
-        List<Suggestion> suggestions = SuggestionsRepo.getInstance().getSuggestions();
-        suggestions = suggestions.stream().filter(suggestion -> filter(suggestion, searchParams)).collect(Collectors.toList());
-        model.addAttribute("suggestions", suggestions);
-        addCurrentUserName(model);
-        List<Gender> list = Gender.values();
-        model.addAttribute("countries", list);
-        model.addAttribute("playersSearchParams", searchParams);
-        return "suggestions";
-    }
+	@RequestMapping(value = { "/suggestions" }, method = RequestMethod.GET)
+	public String getSuggestions(Model model) {
+		PlayersSearchParams searchParams = PlayersSearchParamsRepo.INSTANCE.getParams(getCurrentUser().getLogin());
+		List<Suggestion> suggestions = SuggestionsRepo.getInstance().getSuggestions();
+		suggestions = suggestions.stream().filter(suggestion -> filter(suggestion, searchParams))
+				.collect(Collectors.toList());
+		model.addAttribute("suggestions", suggestions);
+		addCurrentUserName(model);
+		model.addAttribute("genders", Gender.values());
+		model.addAttribute("playersSearchParams", searchParams);
+		return "suggestions";
+	}
 
-    private boolean filter(Suggestion aSuggestion, PlayersSearchParams searchParams) {
-        boolean res = searchParams.getCountryId() == null || aSuggestion.getPlayer().getGender().equals(searchParams.getCountryId());
-        return res;
-    }
+	private boolean filter(Suggestion aSuggestion, PlayersSearchParams searchParams) {
+		Gender gender = searchParams.getGender();
+		boolean res = gender == null || aSuggestion.getPlayer().getGender().equals(gender);
+		return res;
+	}
 
-    private void addCurrentUserName(Model model) {
-        model.addAttribute("userName", getCurrentUser().getName());
-    }
+	private void addCurrentUserName(Model model) {
+		model.addAttribute("userName", getCurrentUser().getName());
+	}
 
-    @RequestMapping(value = {"/addSuggestion"}, method = RequestMethod.GET)
-    public String showAddSuggestionPage(Model model) {
-        SuggestionForm suggestionForm = new SuggestionForm();
-        Optional<Suggestion> suggestionOpt = SuggestionsRepo.getInstance().findByLogin(getCurrentUser().getLogin());
-        suggestionOpt.ifPresent(suggestion -> suggestionForm.setSchedule(suggestion.getSchedule()));
-        fillEditSuggestionModel(model, suggestionForm);
-        return "addSuggestion";
-    }
+	@RequestMapping(value = { "/addSuggestion" }, method = RequestMethod.GET)
+	public String showAddSuggestionPage(Model model) {
+		SuggestionForm suggestionForm = new SuggestionForm();
+		Optional<Suggestion> suggestionOpt = SuggestionsRepo.getInstance().findByLogin(getCurrentUser().getLogin());
+		suggestionOpt.ifPresent(suggestion -> suggestionForm.setSchedule(suggestion.getSchedule()));
+		fillEditSuggestionModel(model, suggestionForm);
+		return "addSuggestion";
+	}
 
-    @RequestMapping(value = {"/addSuggestion"}, method = RequestMethod.POST)
-    public String saveSuggestion(Model model,
-                                 @ModelAttribute("suggestionForm") SuggestionForm aSuggestionForm) {
-        Schedule schedule = aSuggestionForm.getSchedule();
-        System.out.println("schedule " + schedule + "   intervals Str " + schedule.getIntervalsByDay1());
-        if (schedule.isEmpty()) {
-            model.addAttribute("errorMessage", errorMessage);
-            fillEditSuggestionModel(model, aSuggestionForm);
-            return "addSuggestion";
-        }
-        Player player = getCurrentUser();
-        Optional<Suggestion> suggestionOpt = SuggestionsRepo.getInstance().findByLogin(player.getLogin());
-        if (suggestionOpt.isPresent()) {
-            suggestionOpt.get().setSchedule(schedule);
-        } else {
-            SuggestionsRepo.getInstance().addSuggestion(new Suggestion(player, schedule));
-        }
-        return "redirect:/suggestions";
-    }
+	@RequestMapping(value = { "/addSuggestion" }, method = RequestMethod.POST)
+	public String saveSuggestion(Model model, @ModelAttribute("suggestionForm") SuggestionForm aSuggestionForm) {
+		Schedule schedule = aSuggestionForm.getSchedule();
+		System.out.println("schedule " + schedule + "   intervals Str " + schedule.getIntervalsByDay1());
+		if (schedule.isEmpty()) {
+			model.addAttribute("errorMessage", errorMessage);
+			fillEditSuggestionModel(model, aSuggestionForm);
+			return "addSuggestion";
+		}
+		Player player = getCurrentUser();
+		Optional<Suggestion> suggestionOpt = SuggestionsRepo.getInstance().findByLogin(player.getLogin());
+		if (suggestionOpt.isPresent()) {
+			suggestionOpt.get().setSchedule(schedule);
+		} else {
+			SuggestionsRepo.getInstance().addSuggestion(new Suggestion(player, schedule));
+		}
+		return "redirect:/suggestions";
+	}
 
-    @RequestMapping(value = {"/searchPlayers"}, method = RequestMethod.POST)
-    public String searchPlayers(Model model,
-                                @ModelAttribute("playersSearchParams") PlayersSearchParams searchParams) {
-        PlayersSearchParamsRepo.INSTANCE.setParams(getCurrentUser().getLogin(), searchParams);
-        return "redirect:/suggestions";
-    }
+	@RequestMapping(value = { "/searchPlayers" }, method = RequestMethod.POST)
+	public String searchPlayers(Model model, @ModelAttribute("playersSearchParams") PlayersSearchParams searchParams) {
+		PlayersSearchParamsRepo.INSTANCE.setParams(getCurrentUser().getLogin(), searchParams);
+		return "redirect:/suggestions";
+	}
 
-    private void fillEditSuggestionModel(Model model, SuggestionForm aSuggestionForm) {
-        model.addAttribute("suggestionForm", aSuggestionForm);
-        List<HourInterval> intervals = new HourIntervalFactory().create();
-        model.addAttribute("intervals", intervals);
-        addCurrentUserName(model);
+	private void fillEditSuggestionModel(Model model, SuggestionForm aSuggestionForm) {
+		model.addAttribute("suggestionForm", aSuggestionForm);
+		List<HourInterval> intervals = new HourIntervalFactory().create();
+		model.addAttribute("intervals", intervals);
+		addCurrentUserName(model);
 
-    }
+	}
 
-    @RequestMapping("/login")
-    public String login() {
-        return "login";
-    }
+	@RequestMapping("/login")
+	public String login() {
+		return "login";
+	}
 
-    @RequestMapping({"/index", "/"})
-    public String index() {
-        return "index";
-    }
+	@RequestMapping({ "/index", "/" })
+	public String index() {
+		return "index";
+	}
 
-    @RequestMapping(value = {"/registration"}, method = RequestMethod.GET)
-    public String registration(Model model) {
-        fillRegistrationModel(model, new NewUser());
-        return "registration";
-    }
+	@RequestMapping(value = { "/registration" }, method = RequestMethod.GET)
+	public String registration(Model model) {
+		fillRegistrationModel(model, new NewUser());
+		return "registration";
+	}
 
+	@RequestMapping(value = { "/registration" }, method = RequestMethod.POST)
+	public String createNewUser(Model model, @ModelAttribute("newUser") NewUser aNewUser) {
+		System.out.println("createNewUser " + aNewUser.getLogin());
+		fillRegistrationModel(model, aNewUser);
+		if (aNewUser.isEmpty()) {
+			model.addAttribute("errorMessage", errorMessage);
+		} else if (!aNewUser.passwordsIsMatch()) {
+			model.addAttribute("errorMessage", "Пароли не совпадают.");
+		} else if (PlayersRepo.getInstance().hasPlayerByLogin(aNewUser.getLogin())) {
+			model.addAttribute("errorMessage", "Игрок с указанным логином уже зарегистрирован в системе.");
+		} else {
+			Player player = new PlayerFactory(passwordEncoder).createPlayer(aNewUser);
+			PlayersRepo.getInstance().addPlayer(player);
+			return "redirect:/registrationSuccess";
+		}
+		return "registration";
+	}
 
-    @RequestMapping(value = {"/registration"}, method = RequestMethod.POST)
-    public String createNewUser(Model model, @ModelAttribute("newUser") NewUser aNewUser) {
-        System.out.println("createNewUser " + aNewUser.getLogin());
-        fillRegistrationModel(model, aNewUser);
-        if (aNewUser.isEmpty()) {
-            model.addAttribute("errorMessage", errorMessage);
-        } else if (!aNewUser.passwordsIsMatch()) {
-            model.addAttribute("errorMessage", "Пароли не совпадают.");
-        } else if (PlayersRepo.getInstance().hasPlayerByLogin(aNewUser.getLogin())) {
-            model.addAttribute("errorMessage", "Игрок с указанным логином уже зарегистрирован в системе.");
-        } else {
-            Player player = new PlayerFactory(passwordEncoder).createPlayer(aNewUser);
-            PlayersRepo.getInstance().addPlayer(player);
-            return "redirect:/registrationSuccess";
-        }
-        return "registration";
-    }
+	private void fillRegistrationModel(Model model, NewUser aNewUser) {
+		model.addAttribute("newUser", aNewUser);
+		model.addAttribute("genders", Gender.values());
+		model.addAttribute("levels", PlayerLevel.values());
+	}
 
-    private void fillRegistrationModel(Model model, NewUser aNewUser) {
-        model.addAttribute("newUser", aNewUser);
-        model.addAttribute("genders", Gender.values());
-        model.addAttribute("levels", PlayerLevel.values());
-    }
-
-    @RequestMapping(value = {"/registrationSuccess"}, method = RequestMethod.GET)
-    public String registrationSuccess() {
-        return "registrationSuccess";
-    }
-
+	@RequestMapping(value = { "/registrationSuccess" }, method = RequestMethod.GET)
+	public String registrationSuccess() {
+		return "registrationSuccess";
+	}
 
 }

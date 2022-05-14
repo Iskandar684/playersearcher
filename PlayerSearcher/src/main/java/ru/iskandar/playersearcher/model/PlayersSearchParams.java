@@ -7,5 +7,5 @@ import lombok.Setter;
 @Getter
 public class PlayersSearchParams {
 
-    public Gender countryId;
+    public Gender gender;
 }
