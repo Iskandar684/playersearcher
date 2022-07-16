@@ -51,12 +51,18 @@
 					<th>Пол</th>
 					<th>Уровень</th>
 					<th>График</th>
+					<th>Встреча</th>
 				</tr>
 				<tr th:each="suggestion : ${suggestions}">
 					<td th:utext="${suggestion.getPlayer().getName()}">...</td>
 					<td align="center" th:utext="${suggestion.getPlayer().getGender()}">...</td>
 					<td th:utext="${suggestion.getPlayer().getLevel()}">...</td>
 					<td th:utext="${suggestion.getSchedule()}">...</td>
+					<td>
+						<form th:action="@{/suggestGame}" th:object="${suggestion}" method="POST">
+							<button type="submit" name="suggestGame" th:value="${suggestion}">Предложить игру</button>
+						</form>
+					</td>
 				</tr>
 			</table>
 		</div>

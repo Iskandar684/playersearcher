@@ -1,21 +1,32 @@
 package ru.iskandar.playersearcher.controller;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import ru.iskandar.playersearcher.form.SuggestionForm;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import ru.iskandar.playersearcher.model.*;
+
+import ru.iskandar.playersearcher.form.SuggestionForm;
+import ru.iskandar.playersearcher.model.Gender;
+import ru.iskandar.playersearcher.model.HourInterval;
+import ru.iskandar.playersearcher.model.HourIntervalFactory;
+import ru.iskandar.playersearcher.model.NewUser;
+import ru.iskandar.playersearcher.model.Player;
+import ru.iskandar.playersearcher.model.PlayerFactory;
+import ru.iskandar.playersearcher.model.PlayerLevel;
+import ru.iskandar.playersearcher.model.PlayersSearchParams;
+import ru.iskandar.playersearcher.model.Schedule;
+import ru.iskandar.playersearcher.model.Suggestion;
 import ru.iskandar.playersearcher.repo.PlayersRepo;
 import ru.iskandar.playersearcher.repo.PlayersSearchParamsRepo;
 import ru.iskandar.playersearcher.repo.SuggestionsRepo;
@@ -164,6 +175,12 @@ public class MainController {
 	@RequestMapping(value = { "/registrationSuccess" }, method = RequestMethod.GET)
 	public String registrationSuccess() {
 		return "registrationSuccess";
+	}
+	
+	@RequestMapping(value = { "/suggestGame" }, method = RequestMethod.POST)
+	public String suggestGame(Model model, @ModelAttribute("suggestion") Suggestion aSuggestion) {
+		System.out.println("suggestGame "+aSuggestion);
+		return "redirect:/suggestions";
 	}
 
 }
