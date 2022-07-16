@@ -1,36 +1,38 @@
 package ru.iskandar.playersearcher.model;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.experimental.Accessors;
+
 /**
  * Предложение игры.
  */
+@Setter
+@Getter
+@Accessors(prefix = "_")
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(of = "_player")
 public class Suggestion {
 
-    private Player player;
+	/** Игрок */
+	private Player _player;
 
-    private  Schedule _schedule;
+	/** Возможный график игры */
+	private Schedule _schedule;
 
-    public Suggestion(Player aPlayer, Schedule aSchedule) {
-        this.player = aPlayer;
-        this._schedule = aSchedule;
-    }
+	private String _description;
+	
+	private String _UUID = "myUUID";
 
-    public Player getPlayer() {
-        return player;
-    }
+	public Suggestion(Player aPlayer, Schedule aSchedule) {
+		_player = aPlayer;
+		_schedule = aSchedule;
+	}
+	
+	
 
-    public Schedule getSchedule() {
-        return _schedule;
-    }
-
-
-
-    public void setPlayer(Player aPlayer) {
-        player =  aPlayer;
-    }
-
-
-
-    public void setSchedule(Schedule aSchedule) {
-        _schedule = aSchedule;
-    }
 }

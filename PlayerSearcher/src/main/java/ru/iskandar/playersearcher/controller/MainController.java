@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContext;
@@ -12,6 +14,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -27,6 +30,9 @@ import ru.iskandar.playersearcher.model.PlayerLevel;
 import ru.iskandar.playersearcher.model.PlayersSearchParams;
 import ru.iskandar.playersearcher.model.Schedule;
 import ru.iskandar.playersearcher.model.Suggestion;
+import ru.iskandar.playersearcher.repo.Meeting;
+import ru.iskandar.playersearcher.repo.MeetingRepo;
+import ru.iskandar.playersearcher.repo.MeetingStatus;
 import ru.iskandar.playersearcher.repo.PlayersRepo;
 import ru.iskandar.playersearcher.repo.PlayersSearchParamsRepo;
 import ru.iskandar.playersearcher.repo.SuggestionsRepo;
@@ -65,12 +71,33 @@ public class MainController {
 		List<Suggestion> suggestions = SuggestionsRepo.getInstance().getSuggestions();
 		suggestions = suggestions.stream().filter(suggestion -> filter(suggestion, searchParams))
 				.collect(Collectors.toList());
+		suggestions.forEach(suggestion -> suggestion.setDescription(getDescription(suggestion)));
 		model.addAttribute("suggestions", suggestions);
 		addCurrentUserName(model);
 		model.addAttribute("genders", Gender.values());
 		model.addAttribute("playerLevels", PlayerLevel.values());
 		model.addAttribute("playersSearchParams", searchParams);
 		return "suggestions";
+	}
+
+	private String getDescription(Suggestion aSuggestion) {
+		Player currentUser = getCurrentUser();
+		Optional<Meeting> meetingOpt = MeetingRepo.INSTANCE.getMeetings().stream()
+				.filter(meeting -> currentUser.equals(meeting.getInitiator())
+						&& meeting.getPlayer().equals(aSuggestion.getPlayer()))
+				.findFirst();
+		return meetingOpt.map(this::getDescription).orElse("");
+	}
+
+	private String getDescription(Meeting aMeeting) {
+		switch (aMeeting.getStatus()) {
+		case SUGGESTED:
+			return "Ожидание оппонента.";
+		case ACCEPTED:
+			return "Игра назначена.";
+		default:
+			return "";
+		}
 	}
 
 	private boolean filter(Suggestion aSuggestion, PlayersSearchParams aSearchParams) {
@@ -176,10 +203,17 @@ public class MainController {
 	public String registrationSuccess() {
 		return "registrationSuccess";
 	}
-	
+
 	@RequestMapping(value = { "/suggestGame" }, method = RequestMethod.POST)
-	public String suggestGame(Model model, @ModelAttribute("suggestion") Suggestion aSuggestion) {
-		System.out.println("suggestGame "+aSuggestion);
+	public String suggestGame(Model model, @ModelAttribute("suggestion2") Suggestion aSuggestion) {
+		System.out.println("suggestGame " + aSuggestion + "  " + model.asMap().get("suggestGame"));
+		Player currentUser = getCurrentUser();
+		if (currentUser.equals(aSuggestion.getPlayer())) {
+			throw new IllegalArgumentException("Нельзя назначить самому себе игру.");
+		}
+		Meeting meeting = Meeting.builder().initiator(currentUser).player(aSuggestion.getPlayer())
+				.schedule(aSuggestion.getSchedule()).status(MeetingStatus.SUGGESTED).build();
+		MeetingRepo.INSTANCE.addMeeting(meeting);
 		return "redirect:/suggestions";
 	}
 

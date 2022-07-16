@@ -60,7 +60,8 @@
 					<td th:utext="${suggestion.getSchedule()}">...</td>
 					<td>
 						<form th:action="@{/suggestGame}" th:object="${suggestion}" method="POST">
-							<button type="submit" name="suggestGame" th:value="${suggestion}">Предложить игру</button>
+							<label th:utext="${suggestion.getDescription()}"></label>
+							<button type="submit" name="suggestGame" th:value="${suggestion}">Назначить игру</button>
 						</form>
 					</td>
 				</tr>
