@@ -16,4 +16,8 @@ public class SuggestGameForm {
 
 	private Schedule schedule = new Schedule();
 
+	public String getSaveAction() {
+		return String.format("/suggestGame?login=%s", opponent.getLogin());
+	}
+
 }

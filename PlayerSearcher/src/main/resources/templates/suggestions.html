@@ -57,15 +57,9 @@
 					<td align="center" th:utext="${suggestion.getPlayer().getGender()}">...</td>
 					<td th:utext="${suggestion.getPlayer().getLevel()}">...</td>
 					<td th:utext="${suggestion.getSchedule()}">...</td>
-					<!-- <td>
-						<form th:action="@{/suggestGame}" th:object="${suggestion}"
-							method="POST">
-							<label th:utext="${suggestion.getDescription()}"></label>
-							<button type="submit" name="suggestGame" th:value="${suggestion}">Назначить
-								игру</button>
-						</form>
-					</td>  -->
-					<td><a th:href="${suggestion.getActionLink()}" th:text="${suggestion.getActionLinkText()}" /></td>
+					<td><label th:utext="${suggestion.getDescription()}"></label>
+						<a th:href="${suggestion.getActionLink()}"
+						th:text="${suggestion.getActionLinkText()}" /></td>
 				</tr>
 			</table>
 		</div>

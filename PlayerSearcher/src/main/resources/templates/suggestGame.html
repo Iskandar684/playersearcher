@@ -20,7 +20,7 @@
 				th:text="${suggestGameForm.getOpponent().getName()}"></span>
 		</h3>
 
-		<form th:action="@{/suggestGame}" th:object="${suggestGameForm}"
+		<form th:action="${suggestGameForm.getSaveAction()}" th:object="${suggestGameForm}"
 			method="POST">
 			<div>
 				<table border="1" th:align="center">
