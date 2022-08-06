@@ -29,8 +29,9 @@ public class Meeting {
 	private final Player _player;
 
 	/** График игры */
+	@Setter
 	@NonNull
-	private final Schedule _schedule;
+	private  Schedule _schedule;
 
 	@Setter
 	@NonNull

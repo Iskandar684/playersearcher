@@ -70,7 +70,7 @@ public class MainController {
 		List<Suggestion> suggestions = SuggestionsRepo.getInstance().getSuggestions();
 		suggestions = suggestions.stream().filter(suggestion -> filter(suggestion, searchParams))
 				.collect(Collectors.toList());
-		suggestions.forEach(suggestion -> suggestion.setDescription(getDescription(suggestion)));
+		suggestions.forEach(this::fillSuggestion);
 		model.addAttribute("suggestions", suggestions);
 		addCurrentUserName(model);
 		model.addAttribute("genders", Gender.values());
@@ -79,13 +79,16 @@ public class MainController {
 		return "suggestions";
 	}
 
-	private String getDescription(Suggestion aSuggestion) {
+	private void fillSuggestion(Suggestion aSuggestion) {
 		Player currentUser = getCurrentUser();
 		Optional<Meeting> meetingOpt = MeetingRepo.INSTANCE.getMeetings().stream()
 				.filter(meeting -> currentUser.equals(meeting.getInitiator())
 						&& meeting.getPlayer().equals(aSuggestion.getPlayer()))
 				.findFirst();
-		return meetingOpt.map(this::getDescription).orElse("");
+		String desc = meetingOpt.map(this::getDescription).orElse("");
+		aSuggestion.setDescription(desc);
+		String actionText = meetingOpt.isPresent() ? "Изменить" : "Назначить игру";
+		aSuggestion.setActionLinkText(actionText);
 	}
 
 	private String getDescription(Meeting aMeeting) {
@@ -211,7 +214,8 @@ public class MainController {
 		suggestGameForm.setOpponent(suggestion.getPlayer());
 		suggestGameForm.setSchedule(suggestion.getSchedule());
 		model.addAttribute("suggestGameForm", suggestGameForm);
-		Collection<HourInterval> intervals = suggestion.getSchedule().getNotEmptyIntervals();
+		Collection<HourInterval> intervals = suggestion.getSchedule().getNotEmptyIntervals().stream().sorted()
+				.collect(Collectors.toList());
 		model.addAttribute("intervals", intervals);
 		addCurrentUserName(model);
 		return "suggestGame";
@@ -221,13 +225,24 @@ public class MainController {
 	public String suggestGame(Model model, @ModelAttribute("suggestGameForm") SuggestGameForm suggestGameForm,
 			@ModelAttribute("login") String aLogin) {
 		System.out.println("suggestGame " + suggestGameForm + "  aLogin " + aLogin);
-		if (getCurrentUser().getLogin().equals(aLogin)) {
+		Player currentUser = getCurrentUser();
+		if (currentUser.getLogin().equals(aLogin)) {
 			throw new IllegalArgumentException("Нельзя назначить самому себе игру.");
 		}
 		Suggestion suggestion = SuggestionsRepo.getInstance().findByLogin(aLogin).orElseThrow();
-		Meeting meeting = Meeting.builder().player(suggestion.getPlayer()).initiator(getCurrentUser())
-				.status(MeetingStatus.SUGGESTED).schedule(suggestion.getSchedule()).build();
-		MeetingRepo.INSTANCE.addMeeting(meeting);
+		Optional<Meeting> meetingOpt = MeetingRepo.INSTANCE.getMeetings().stream()
+				.filter(meeting -> currentUser.equals(meeting.getInitiator())
+						&& meeting.getPlayer().equals(suggestion.getPlayer()))
+				.findFirst();
+		Meeting meeting;
+		if (meetingOpt.isEmpty()) {
+			meeting = Meeting.builder().player(suggestion.getPlayer()).initiator(getCurrentUser())
+					.status(MeetingStatus.SUGGESTED).schedule(suggestGameForm.getSchedule()).build();
+			MeetingRepo.INSTANCE.addMeeting(meeting);
+		} else {
+			meeting = meetingOpt.get();
+			meeting.setSchedule(suggestGameForm.getSchedule());
+		}
 		return "redirect:/suggestions";
 	}
 
