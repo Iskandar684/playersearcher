@@ -25,14 +25,16 @@ public class Suggestion {
 	private Schedule _schedule;
 
 	private String _description;
-	
-	private String _UUID = "myUUID";
+
+	private String _actionLinkText = "Назначить игру";
+
+	private String _actionLink;
 
 	public Suggestion(Player aPlayer, Schedule aSchedule) {
 		_player = aPlayer;
 		_schedule = aSchedule;
+		//_actionLink = String.format("%s%s", "/suggestGame/", _player.getLogin());
+		_actionLink = String.format("%s%s", "/suggestGame?login=", _player.getLogin());
 	}
-	
-	
 
 }

@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContext;
@@ -14,11 +12,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import ru.iskandar.playersearcher.form.SuggestGameForm;
 import ru.iskandar.playersearcher.form.SuggestionForm;
 import ru.iskandar.playersearcher.model.Gender;
 import ru.iskandar.playersearcher.model.HourInterval;
@@ -204,16 +202,50 @@ public class MainController {
 		return "registrationSuccess";
 	}
 
+//	@RequestMapping(value = { "/suggestGame" }, method = RequestMethod.POST)
+//	public String suggestGame(Model model, @ModelAttribute("suggestion") Suggestion aSuggestion) {
+//		System.out.println("suggestGame " + aSuggestion + "  " + model.asMap().get("suggestGame"));
+//		Player currentUser = getCurrentUser();
+//		if (currentUser.equals(aSuggestion.getPlayer())) {
+//			throw new IllegalArgumentException("Нельзя назначить самому себе игру.");
+//		}
+//		Meeting meeting = Meeting.builder().initiator(currentUser).player(aSuggestion.getPlayer())
+//				.schedule(aSuggestion.getSchedule()).status(MeetingStatus.SUGGESTED).build();
+//		MeetingRepo.INSTANCE.addMeeting(meeting);
+//		return "redirect:/suggestions";
+//	}
+
+	@RequestMapping(value = { "/suggestGame" }, method = RequestMethod.GET)
+	public String showSuggestGamePage(Model model, @ModelAttribute("login") String aLogin) {
+		System.out.println("Логин оппонента " + aLogin);
+		SuggestGameForm suggestGameForm = new SuggestGameForm();
+		Suggestion suggestion = SuggestionsRepo.getInstance().findByLogin(aLogin).orElseThrow();
+		Meeting meeting = Meeting.builder().player(suggestion.getPlayer()).initiator(getCurrentUser())
+				.status(MeetingStatus.NONE).schedule(suggestion.getSchedule()).build();
+		// Optional<Suggestion> suggestionOpt =
+		// SuggestionsRepo.getInstance().findByLogin(getCurrentUser().getLogin());
+		// suggestionOpt.ifPresent(suggestion ->
+		// suggestionForm.setSchedule(suggestion.getSchedule()));
+		// fillEditSuggestionModel(model, suggestionForm);
+		suggestGameForm.setOpponent(PlayersRepo.getInstance().findPlayerByLogin(aLogin).orElseThrow()) ;
+		model.addAttribute("suggestGameForm", suggestGameForm);
+		model.addAttribute("meeting", meeting);
+		List<HourInterval> intervals = new HourIntervalFactory().create();
+		model.addAttribute("intervals", intervals);
+		addCurrentUserName(model);
+		return "suggestGame";
+	}
+
 	@RequestMapping(value = { "/suggestGame" }, method = RequestMethod.POST)
-	public String suggestGame(Model model, @ModelAttribute("suggestion2") Suggestion aSuggestion) {
-		System.out.println("suggestGame " + aSuggestion + "  " + model.asMap().get("suggestGame"));
-		Player currentUser = getCurrentUser();
-		if (currentUser.equals(aSuggestion.getPlayer())) {
-			throw new IllegalArgumentException("Нельзя назначить самому себе игру.");
-		}
-		Meeting meeting = Meeting.builder().initiator(currentUser).player(aSuggestion.getPlayer())
-				.schedule(aSuggestion.getSchedule()).status(MeetingStatus.SUGGESTED).build();
-		MeetingRepo.INSTANCE.addMeeting(meeting);
+	public String suggestGame(Model model, @ModelAttribute("suggestGameForm") SuggestGameForm suggestGameForm) {
+		System.out.println("suggestGame " + suggestGameForm);
+		Meeting meeting=	(Meeting) model.asMap().get("meeting") ;
+		System.out.println("meeting " + meeting);
+//		if (aMeeting.getInitiator().equals(aMeeting.getPlayer())) {
+//			throw new IllegalArgumentException("Нельзя назначить самому себе игру.");
+//		}
+//		aMeeting.setStatus(MeetingStatus.SUGGESTED);
+//		MeetingRepo.INSTANCE.addMeeting(aMeeting);
 		return "redirect:/suggestions";
 	}
 
