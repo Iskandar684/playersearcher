@@ -1,5 +1,6 @@
 package ru.iskandar.playersearcher.controller;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -202,31 +203,15 @@ public class MainController {
 		return "registrationSuccess";
 	}
 
-//	@RequestMapping(value = { "/suggestGame" }, method = RequestMethod.POST)
-//	public String suggestGame(Model model, @ModelAttribute("suggestion") Suggestion aSuggestion) {
-//		System.out.println("suggestGame " + aSuggestion + "  " + model.asMap().get("suggestGame"));
-//		Player currentUser = getCurrentUser();
-//		if (currentUser.equals(aSuggestion.getPlayer())) {
-//			throw new IllegalArgumentException("Нельзя назначить самому себе игру.");
-//		}
-//		Meeting meeting = Meeting.builder().initiator(currentUser).player(aSuggestion.getPlayer())
-//				.schedule(aSuggestion.getSchedule()).status(MeetingStatus.SUGGESTED).build();
-//		MeetingRepo.INSTANCE.addMeeting(meeting);
-//		return "redirect:/suggestions";
-//	}
-
 	@RequestMapping(value = { "/suggestGame" }, method = RequestMethod.GET)
 	public String showSuggestGamePage(Model model, @ModelAttribute("login") String aLogin) {
 		System.out.println("Логин оппонента " + aLogin);
 		SuggestGameForm suggestGameForm = new SuggestGameForm();
-		// Optional<Suggestion> suggestionOpt =
-		// SuggestionsRepo.getInstance().findByLogin(getCurrentUser().getLogin());
-		// suggestionOpt.ifPresent(suggestion ->
-		// suggestionForm.setSchedule(suggestion.getSchedule()));
-		// fillEditSuggestionModel(model, suggestionForm);
-		suggestGameForm.setOpponent(PlayersRepo.getInstance().findPlayerByLogin(aLogin).orElseThrow());
+		Suggestion suggestion = SuggestionsRepo.getInstance().findByLogin(aLogin).orElseThrow();
+		suggestGameForm.setOpponent(suggestion.getPlayer());
+		suggestGameForm.setSchedule(suggestion.getSchedule());
 		model.addAttribute("suggestGameForm", suggestGameForm);
-		List<HourInterval> intervals = new HourIntervalFactory().create();
+		Collection<HourInterval> intervals = suggestion.getSchedule().getNotEmptyIntervals();
 		model.addAttribute("intervals", intervals);
 		addCurrentUserName(model);
 		return "suggestGame";
