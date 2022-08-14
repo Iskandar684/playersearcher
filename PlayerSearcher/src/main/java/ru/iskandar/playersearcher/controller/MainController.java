@@ -88,15 +88,17 @@ public class MainController {
 				.findFirst();
 		String desc = meetingOpt.map(this::getDescription).orElse("");
 		aSuggestion.setDescription(desc);
-		String actionText = meetingOpt.isPresent() ? "Изменить" : "Назначить игру";
-		aSuggestion.setActionLinkText(actionText);
-		if (meetingOpt.isPresent()) {
+		if (meetingOpt.isEmpty() || meetingOpt.get().getStatus() == MeetingStatus.SUGGESTED) {
+			String text = meetingOpt.isPresent() ? "Изменить" : "Назначить игру";
+			String link = String.format("%s%s", "/suggestGame?login=", aSuggestion.getPlayer().getLogin());
+			aSuggestion.setCreateOrEditSuggestionLink(new LinkDescription(text, link));
+		}
+		LinkDescription cancelLinkDescription = meetingOpt.map(meeting -> {
 			String cancelLink = String.format("%s%s", "/cancelGameSuggestion?login=",
 					meetingOpt.get().getPlayer().getLogin());
-			aSuggestion.setCancelSuggestionLink(new LinkDescription("Отменить", cancelLink));
-		}else {
-			aSuggestion.setCancelSuggestionLink(new LinkDescription("", ""));
-		}
+			return new LinkDescription("Отменить", cancelLink);
+		}).orElse(null);
+		aSuggestion.setCancelSuggestionLink(cancelLinkDescription);
 	}
 
 	private String getDescription(Meeting aMeeting) {
@@ -257,14 +259,14 @@ public class MainController {
 	@RequestMapping(value = { "/cancelGameSuggestion" }, method = RequestMethod.GET)
 	public String cancelGameSuggestion(Model model, @ModelAttribute("login") String aLogin) {
 		System.out.println("cancelGameSuggestion " + "  aLogin " + aLogin);
-				Player currentUser = getCurrentUser();
-				Suggestion suggestion = SuggestionsRepo.getInstance().findByLogin(aLogin).orElseThrow();
+		Player currentUser = getCurrentUser();
+		Suggestion suggestion = SuggestionsRepo.getInstance().findByLogin(aLogin).orElseThrow();
 		Optional<Meeting> meetingOpt = MeetingRepo.INSTANCE.getMeetings().stream()
 				.filter(meeting -> currentUser.equals(meeting.getInitiator())
 						&& meeting.getPlayer().equals(suggestion.getPlayer()))
 				.findFirst();
 		if (meetingOpt.isEmpty()) {
-			String opponent =PlayersRepo.getInstance().findPlayerByLogin(aLogin).map(Player::getName).orElse(aLogin) ;
+			String opponent = PlayersRepo.getInstance().findPlayerByLogin(aLogin).map(Player::getName).orElse(aLogin);
 			throw new IllegalStateException(String.format("Встреча с %s не найдена.", opponent));
 		}
 		MeetingRepo.INSTANCE.removeMeeting(meetingOpt.get());

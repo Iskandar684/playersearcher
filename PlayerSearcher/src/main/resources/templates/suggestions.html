@@ -55,9 +55,17 @@
 					<td align="center" th:utext="${suggestion.getPlayer().getGender()}">...</td>
 					<td th:utext="${suggestion.getPlayer().getLevel()}">...</td>
 					<td th:utext="${suggestion.getSchedule()}">...</td>
-					<td><label th:utext="${suggestion.getDescription()}"></label>
-						<a th:href="${suggestion.getActionLink()}" th:text="${suggestion.getActionLinkText()}" />
-						<a th:href="${suggestion.getCancelSuggestionLink().getLink()}" th:text="${suggestion.getCancelSuggestionLink().getText()}" / </td>
+					<td>
+						<label th:utext="${suggestion.getDescription()}"></label>
+						<div th:if="${suggestion.hasCreateOrEditSuggestionLink()}">
+							<a th:href="${suggestion.getCreateOrEditSuggestionLink().getLink()}"
+								th:text="${suggestion.getCreateOrEditSuggestionLink().getText()}" />
+						</div>
+						<div th:if="${suggestion.hasCancelSuggestionLink()}">
+							<a th:href="${suggestion.getCancelSuggestionLink().getLink()}"
+								th:text="${suggestion.getCancelSuggestionLink().getText()}" />
+						</div>
+					</td>
 				</tr>
 			</table>
 		</div>
