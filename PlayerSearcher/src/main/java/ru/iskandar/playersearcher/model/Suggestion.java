@@ -29,6 +29,8 @@ public class Suggestion {
 	private String _actionLinkText;
 
 	private String _actionLink;
+	
+	private LinkDescription _cancelSuggestionLink;
 
 	public Suggestion(Player aPlayer, Schedule aSchedule) {
 		_player = aPlayer;

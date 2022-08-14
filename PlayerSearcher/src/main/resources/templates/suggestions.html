@@ -2,9 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-<meta charset="UTF-8" />
-<title>Список игроков</title>
-<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+	<meta charset="UTF-8" />
+	<title>Список игроков</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
 </head>
 
 <body>
@@ -18,21 +18,19 @@
 		<h1>Список игроков в настольный теннис</h1>
 		<div align="right">
 			<h4>Критерии поиска:</h4>
-			<form th:action="@{/searchPlayers}"
-				th:object="${playersSearchParams}" method="POST">
+			<form th:action="@{/searchPlayers}" th:object="${playersSearchParams}" method="POST">
 				<div>
 					<label>Пол: </label> <select th:field="*{gender}">
 						<option value="NONE">неважно</option>
-						<option th:each="gender: ${genders}" th:value="${gender}"
-							th:text="${gender.getText()}" />
+						<option th:each="gender: ${genders}" th:value="${gender}" th:text="${gender.getText()}" />
 					</select>
 				</div>
 				<br />
 				<div>
 					<label>Уровень: </label> <select th:field="*{playerLevel}">
 						<option value="NONE">неважно</option>
-						<option th:each="playerLevel: ${playerLevels}"
-							th:value="${playerLevel}" th:text="${playerLevel.getText()}" />
+						<option th:each="playerLevel: ${playerLevels}" th:value="${playerLevel}"
+							th:text="${playerLevel.getText()}" />
 					</select>
 				</div>
 				<br />
@@ -58,8 +56,8 @@
 					<td th:utext="${suggestion.getPlayer().getLevel()}">...</td>
 					<td th:utext="${suggestion.getSchedule()}">...</td>
 					<td><label th:utext="${suggestion.getDescription()}"></label>
-						<a th:href="${suggestion.getActionLink()}"
-						th:text="${suggestion.getActionLinkText()}" /></td>
+						<a th:href="${suggestion.getActionLink()}" th:text="${suggestion.getActionLinkText()}" />
+						<a th:href="${suggestion.getCancelSuggestionLink().getLink()}" th:text="${suggestion.getCancelSuggestionLink().getText()}" / </td>
 				</tr>
 			</table>
 		</div>

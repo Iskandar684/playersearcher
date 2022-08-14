@@ -5,11 +5,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import lombok.NonNull;
 import ru.iskandar.playersearcher.model.HourInterval;
 import ru.iskandar.playersearcher.model.Player;
 import ru.iskandar.playersearcher.model.Schedule;
 import ru.iskandar.playersearcher.model.Suggestion;
-
 
 //@Repository
 public class SuggestionsRepo {
@@ -37,7 +37,7 @@ public class SuggestionsRepo {
 		return Collections.unmodifiableList(suggestions);
 	}
 
-	public void addSuggestion(Suggestion aSuggestion) {
+	public void addSuggestion(@NonNull Suggestion aSuggestion) {
 		suggestions.add(aSuggestion);
 	}
 

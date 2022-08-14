@@ -22,6 +22,7 @@ import ru.iskandar.playersearcher.form.SuggestionForm;
 import ru.iskandar.playersearcher.model.Gender;
 import ru.iskandar.playersearcher.model.HourInterval;
 import ru.iskandar.playersearcher.model.HourIntervalFactory;
+import ru.iskandar.playersearcher.model.LinkDescription;
 import ru.iskandar.playersearcher.model.NewUser;
 import ru.iskandar.playersearcher.model.Player;
 import ru.iskandar.playersearcher.model.PlayerFactory;
@@ -89,6 +90,13 @@ public class MainController {
 		aSuggestion.setDescription(desc);
 		String actionText = meetingOpt.isPresent() ? "Изменить" : "Назначить игру";
 		aSuggestion.setActionLinkText(actionText);
+		if (meetingOpt.isPresent()) {
+			String cancelLink = String.format("%s%s", "/cancelGameSuggestion?login=",
+					meetingOpt.get().getPlayer().getLogin());
+			aSuggestion.setCancelSuggestionLink(new LinkDescription("Отменить", cancelLink));
+		}else {
+			aSuggestion.setCancelSuggestionLink(new LinkDescription("", ""));
+		}
 	}
 
 	private String getDescription(Meeting aMeeting) {
@@ -243,6 +251,23 @@ public class MainController {
 			meeting = meetingOpt.get();
 			meeting.setSchedule(suggestGameForm.getSchedule());
 		}
+		return "redirect:/suggestions";
+	}
+
+	@RequestMapping(value = { "/cancelGameSuggestion" }, method = RequestMethod.GET)
+	public String cancelGameSuggestion(Model model, @ModelAttribute("login") String aLogin) {
+		System.out.println("cancelGameSuggestion " + "  aLogin " + aLogin);
+				Player currentUser = getCurrentUser();
+				Suggestion suggestion = SuggestionsRepo.getInstance().findByLogin(aLogin).orElseThrow();
+		Optional<Meeting> meetingOpt = MeetingRepo.INSTANCE.getMeetings().stream()
+				.filter(meeting -> currentUser.equals(meeting.getInitiator())
+						&& meeting.getPlayer().equals(suggestion.getPlayer()))
+				.findFirst();
+		if (meetingOpt.isEmpty()) {
+			String opponent =PlayersRepo.getInstance().findPlayerByLogin(aLogin).map(Player::getName).orElse(aLogin) ;
+			throw new IllegalStateException(String.format("Встреча с %s не найдена.", opponent));
+		}
+		MeetingRepo.INSTANCE.removeMeeting(meetingOpt.get());
 		return "redirect:/suggestions";
 	}
 
