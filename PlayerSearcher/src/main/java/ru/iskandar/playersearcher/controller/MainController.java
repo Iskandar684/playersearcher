@@ -82,24 +82,35 @@ public class MainController {
 
 	private void fillSuggestion(Suggestion aSuggestion) {
 		Player currentUser = getCurrentUser();
-		Optional<Meeting> meetingOpt = MeetingRepo.INSTANCE.getMeetings().stream()
+		Optional<Meeting> outgoingMeetingOpt = MeetingRepo.INSTANCE.getMeetings().stream()
 				.filter(meeting -> currentUser.equals(meeting.getInitiator())
 						&& meeting.getPlayer().equals(aSuggestion.getPlayer()))
 				.findFirst();
-		String desc = meetingOpt.map(this::getDescription).orElse("");
+
+		Optional<Meeting> incomingMeetingOpt = MeetingRepo.INSTANCE.getMeetings().stream()
+				.filter(meeting -> MeetingStatus.SUGGESTED == meeting.getStatus()
+						&& currentUser.equals(meeting.getPlayer()) && currentUser.equals(aSuggestion.getPlayer()))
+				.findFirst();
+		String desc;
+		if (incomingMeetingOpt.isPresent()) {
+			desc = String.format("%s пригласил вас на игру: %s.", incomingMeetingOpt.get().getInitiator().getName(),
+					incomingMeetingOpt.get().getSchedule());
+		} else {
+			desc = outgoingMeetingOpt.map(this::getDescription).orElse("");
+		}
 		aSuggestion.setDescription(desc);
 		boolean isCurrentUserSuggestion = currentUser.equals(aSuggestion.getPlayer());
 		LinkDescription createOrEditSuggestionLink = null;
 		if (!isCurrentUserSuggestion
-				&& (meetingOpt.isEmpty() || meetingOpt.get().getStatus() == MeetingStatus.SUGGESTED)) {
-			String text = meetingOpt.isPresent() ? "Изменить" : "Назначить игру";
+				&& (outgoingMeetingOpt.isEmpty() || outgoingMeetingOpt.get().getStatus() == MeetingStatus.SUGGESTED)) {
+			String text = outgoingMeetingOpt.isPresent() ? "Изменить" : "Назначить игру";
 			String link = String.format("%s%s", "/suggestGame?login=", aSuggestion.getPlayer().getLogin());
 			createOrEditSuggestionLink = new LinkDescription(text, link);
 		}
 		aSuggestion.setCreateOrEditSuggestionLink(createOrEditSuggestionLink);
-		LinkDescription cancelLinkDescription = meetingOpt.map(meeting -> {
+		LinkDescription cancelLinkDescription = outgoingMeetingOpt.map(meeting -> {
 			String cancelLink = String.format("%s%s", "/cancelGameSuggestion?login=",
-					meetingOpt.get().getPlayer().getLogin());
+					outgoingMeetingOpt.get().getPlayer().getLogin());
 			return new LinkDescription("Отменить", cancelLink);
 		}).orElse(null);
 		aSuggestion.setCancelSuggestionLink(cancelLinkDescription);
