@@ -88,11 +88,15 @@ public class MainController {
 				.findFirst();
 		String desc = meetingOpt.map(this::getDescription).orElse("");
 		aSuggestion.setDescription(desc);
-		if (meetingOpt.isEmpty() || meetingOpt.get().getStatus() == MeetingStatus.SUGGESTED) {
+		boolean isCurrentUserSuggestion = currentUser.equals(aSuggestion.getPlayer());
+		LinkDescription createOrEditSuggestionLink = null;
+		if (!isCurrentUserSuggestion
+				&& (meetingOpt.isEmpty() || meetingOpt.get().getStatus() == MeetingStatus.SUGGESTED)) {
 			String text = meetingOpt.isPresent() ? "Изменить" : "Назначить игру";
 			String link = String.format("%s%s", "/suggestGame?login=", aSuggestion.getPlayer().getLogin());
-			aSuggestion.setCreateOrEditSuggestionLink(new LinkDescription(text, link));
+			createOrEditSuggestionLink = new LinkDescription(text, link);
 		}
+		aSuggestion.setCreateOrEditSuggestionLink(createOrEditSuggestionLink);
 		LinkDescription cancelLinkDescription = meetingOpt.map(meeting -> {
 			String cancelLink = String.format("%s%s", "/cancelGameSuggestion?login=",
 					meetingOpt.get().getPlayer().getLogin());
