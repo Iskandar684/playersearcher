@@ -28,6 +28,8 @@ public class Suggestion {
 
 	private LinkDescription _cancelSuggestionLink;
 
+	private AcceptDeclineLinks _acceptDeclineLinks;
+
 	public Suggestion(Player aPlayer, Schedule aSchedule) {
 		_player = aPlayer;
 		_schedule = aSchedule;
@@ -39,6 +41,10 @@ public class Suggestion {
 
 	public boolean hasCreateOrEditSuggestionLink() {
 		return _createOrEditSuggestionLink != null;
+	}
+
+	public boolean hasAcceptDeclineLinks() {
+		return _acceptDeclineLinks != null;
 	}
 
 }

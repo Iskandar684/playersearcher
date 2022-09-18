@@ -65,6 +65,12 @@
 							<a th:href="${suggestion.getCancelSuggestionLink().getLink()}"
 								th:text="${suggestion.getCancelSuggestionLink().getText()}" />
 						</div>
+						<div th:if="${suggestion.hasAcceptDeclineLinks()}">
+							<a th:href="${suggestion.getAcceptDeclineLinks().getAcceptLink().getLink()}"
+								th:text="${suggestion.getAcceptDeclineLinks().getAcceptLink().getText()}" />
+							<a th:href="${suggestion.getAcceptDeclineLinks().getDeclineLink().getLink()}"
+								th:text="${suggestion.getAcceptDeclineLinks().getDeclineLink().getText()}" />
+						</div>
 					</td>
 				</tr>
 			</table>

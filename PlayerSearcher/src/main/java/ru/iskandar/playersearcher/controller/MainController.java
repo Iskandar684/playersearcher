@@ -2,6 +2,7 @@ package ru.iskandar.playersearcher.controller;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import ru.iskandar.playersearcher.form.SuggestGameForm;
 import ru.iskandar.playersearcher.form.SuggestionForm;
+import ru.iskandar.playersearcher.model.AcceptDeclineLinks;
 import ru.iskandar.playersearcher.model.Gender;
 import ru.iskandar.playersearcher.model.HourInterval;
 import ru.iskandar.playersearcher.model.HourIntervalFactory;
@@ -91,10 +93,31 @@ public class MainController {
 				.filter(meeting -> MeetingStatus.SUGGESTED == meeting.getStatus()
 						&& currentUser.equals(meeting.getPlayer()) && currentUser.equals(aSuggestion.getPlayer()))
 				.findFirst();
+		//FIXME 
+		aSuggestion.setAcceptDeclineLinks(null) ;
 		String desc;
 		if (incomingMeetingOpt.isPresent()) {
-			desc = String.format("%s пригласил вас на игру: %s.", incomingMeetingOpt.get().getInitiator().getName(),
-					incomingMeetingOpt.get().getSchedule());
+			Player opponent = incomingMeetingOpt.get().getInitiator();
+			MeetingStatus status = incomingMeetingOpt.get().getStatus();
+			switch (status) {
+			case SUGGESTED: {
+				desc = String.format("%s пригласил вас на игру: %s.", opponent.getName(),
+						incomingMeetingOpt.get().getSchedule());
+				aSuggestion.setAcceptDeclineLinks(createAcceptDeclineLinks(opponent));
+				break;
+			}
+			case ACCEPTED:
+				desc = String.format("У вас назначена игра с %s: %s.", opponent.getName(),
+						incomingMeetingOpt.get().getSchedule());
+				break;
+			case DECLINED:
+				desc = String.format("Игра с %s отклонена: %s.", opponent.getName(),
+						incomingMeetingOpt.get().getSchedule());
+				break;
+			default:
+				desc = "";
+				break;
+			}
 		} else {
 			desc = outgoingMeetingOpt.map(this::getDescription).orElse("");
 		}
@@ -114,6 +137,14 @@ public class MainController {
 			return new LinkDescription("Отменить", cancelLink);
 		}).orElse(null);
 		aSuggestion.setCancelSuggestionLink(cancelLinkDescription);
+	}
+
+	private AcceptDeclineLinks createAcceptDeclineLinks(Player aOpponent) {
+		LinkDescription acceptLink = new LinkDescription("Принять",
+				String.format("/acceptMeeting?login=%s", aOpponent.getLogin()));
+		LinkDescription declineLink = new LinkDescription("Отклонить",
+				String.format("/declineMeeting?login=%s", aOpponent.getLogin()));
+		return AcceptDeclineLinks.builder().acceptLink(acceptLink).declineLink(declineLink).build();
 	}
 
 	private String getDescription(Meeting aMeeting) {
@@ -285,6 +316,38 @@ public class MainController {
 			throw new IllegalStateException(String.format("Встреча с %s не найдена.", opponent));
 		}
 		MeetingRepo.INSTANCE.removeMeeting(meetingOpt.get());
+		return "redirect:/suggestions";
+	}
+
+	@RequestMapping(value = { "/acceptMeeting" }, method = RequestMethod.GET)
+	public String acceptMeeting(Model model, @ModelAttribute("login") String aLogin) {
+		System.out.println("acceptMeeting " + "  aLogin " + aLogin);
+		Player currentUser = getCurrentUser();
+		Optional<Meeting> meetingOpt = MeetingRepo.INSTANCE.getMeetings().stream()
+				.filter(meeting -> Objects.equals(aLogin, meeting.getInitiator().getLogin())
+						&& Objects.equals(currentUser, meeting.getPlayer()))
+				.findFirst();
+		if (meetingOpt.isEmpty()) {
+			String opponent = PlayersRepo.getInstance().findPlayerByLogin(aLogin).map(Player::getName).orElse(aLogin);
+			throw new IllegalStateException(String.format("Встреча с %s не найдена.", opponent));
+		}
+		meetingOpt.get().setStatus(MeetingStatus.ACCEPTED);
+		return "redirect:/suggestions";
+	}
+
+	@RequestMapping(value = { "/declineMeeting" }, method = RequestMethod.GET)
+	public String declineMeeting(Model model, @ModelAttribute("login") String aLogin) {
+		System.out.println("declineMeeting " + "  aLogin " + aLogin);
+		Player currentUser = getCurrentUser();
+		Optional<Meeting> meetingOpt = MeetingRepo.INSTANCE.getMeetings().stream()
+				.filter(meeting -> Objects.equals(aLogin, meeting.getInitiator().getLogin())
+						&& Objects.equals(currentUser, meeting.getPlayer()))
+				.findFirst();
+		if (meetingOpt.isEmpty()) {
+			String opponent = PlayersRepo.getInstance().findPlayerByLogin(aLogin).map(Player::getName).orElse(aLogin);
+			throw new IllegalStateException(String.format("Встреча с %s не найдена.", opponent));
+		}
+		meetingOpt.get().setStatus(MeetingStatus.DECLINED);
 		return "redirect:/suggestions";
 	}
 

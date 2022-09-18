@@ -4,6 +4,8 @@ public enum MeetingStatus {
 
 	SUGGESTED,
 
-	ACCEPTED
+	ACCEPTED,
+	
+	DECLINED
 
 }
