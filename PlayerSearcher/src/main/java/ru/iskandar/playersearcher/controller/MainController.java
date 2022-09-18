@@ -89,12 +89,10 @@ public class MainController {
 						&& meeting.getPlayer().equals(aSuggestion.getPlayer()))
 				.findFirst();
 
-		Optional<Meeting> incomingMeetingOpt = MeetingRepo.INSTANCE.getMeetings().stream()
-				.filter(meeting -> MeetingStatus.SUGGESTED == meeting.getStatus()
-						&& currentUser.equals(meeting.getPlayer()) && currentUser.equals(aSuggestion.getPlayer()))
+		Optional<Meeting> incomingMeetingOpt = MeetingRepo.INSTANCE.getMeetings().stream().filter(
+				meeting -> currentUser.equals(meeting.getPlayer()) && currentUser.equals(aSuggestion.getPlayer()))
 				.findFirst();
-		//FIXME 
-		aSuggestion.setAcceptDeclineLinks(null) ;
+		AcceptDeclineLinks acceptDeclineLinks = null;
 		String desc;
 		if (incomingMeetingOpt.isPresent()) {
 			Player opponent = incomingMeetingOpt.get().getInitiator();
@@ -103,7 +101,7 @@ public class MainController {
 			case SUGGESTED: {
 				desc = String.format("%s пригласил вас на игру: %s.", opponent.getName(),
 						incomingMeetingOpt.get().getSchedule());
-				aSuggestion.setAcceptDeclineLinks(createAcceptDeclineLinks(opponent));
+				acceptDeclineLinks = createAcceptDeclineLinks(opponent);
 				break;
 			}
 			case ACCEPTED:
@@ -122,6 +120,7 @@ public class MainController {
 			desc = outgoingMeetingOpt.map(this::getDescription).orElse("");
 		}
 		aSuggestion.setDescription(desc);
+		aSuggestion.setAcceptDeclineLinks(acceptDeclineLinks);
 		boolean isCurrentUserSuggestion = currentUser.equals(aSuggestion.getPlayer());
 		LinkDescription createOrEditSuggestionLink = null;
 		if (!isCurrentUserSuggestion
