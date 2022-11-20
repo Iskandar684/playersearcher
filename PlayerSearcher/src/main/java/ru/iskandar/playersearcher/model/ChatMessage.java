@@ -1,6 +1,7 @@
 package ru.iskandar.playersearcher.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,11 +12,16 @@ import lombok.experimental.Accessors;
  */
 @Setter
 @Getter
-@Accessors(prefix = "_")
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Accessors(prefix = "_")
 public class ChatMessage {
 
+    /** Отправитель */
+    private String _sender;
+
+    /** Содержимое */
     private String _content;
 
 }

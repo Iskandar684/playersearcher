@@ -18,7 +18,7 @@ public class ChatController {
     public ChatMessage sendMessage(ChatMessage message, Principal aPrincipal) throws Exception {
         String sender = PlayersRepo.getInstance().findPlayerByLogin(aPrincipal.getName())
                 .map(Player::getName).orElseGet(aPrincipal::getName);
-        return new ChatMessage(String.format("%s: %s", sender, message.getContent()));
+        return ChatMessage.builder().sender(sender).content(message.getContent()).build();
     }
 
 }
