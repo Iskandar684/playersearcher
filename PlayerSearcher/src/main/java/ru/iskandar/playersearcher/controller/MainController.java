@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import lombok.NonNull;
 import ru.iskandar.playersearcher.form.SuggestGameForm;
 import ru.iskandar.playersearcher.form.SuggestionForm;
 import ru.iskandar.playersearcher.model.AcceptDeclineLinks;
@@ -136,7 +137,34 @@ public class MainController {
 			return new LinkDescription("Отменить", cancelLink);
 		}).orElse(null);
 		aSuggestion.setCancelSuggestionLink(cancelLinkDescription);
+                if (!currentUser.equals(aSuggestion.getPlayer())) {
+                    aSuggestion.setChatLink(createChatLink(aSuggestion));
+                }
 	}
+
+        private LinkDescription createChatLink(@NonNull Suggestion aSuggestion) {
+            String link =
+                    String.format("%s%s", "/openChat?login=", aSuggestion.getPlayer().getLogin());
+            return new LinkDescription("Написать", link);
+        }
+
+        @RequestMapping(value = {"/openChat"}, method = RequestMethod.GET)
+        public String openChat(Model model, @ModelAttribute("login") String aLogin) {
+            System.out.println("openChat " + "  aLogin " + aLogin);
+            addCurrentUserName(model);
+            Player recipient = PlayersRepo.getInstance().findPlayerByLogin(aLogin).orElseThrow();
+            model.addAttribute("recipient", recipient.getName());
+            return String.format("redirect:/chat?login=%s", aLogin);
+        }
+
+        @RequestMapping(value = {"/chat"}, method = RequestMethod.GET)
+        public String getChat(Model model, @ModelAttribute("login") String aRecipientLogin) {
+            addCurrentUserName(model);
+            Player recipient =
+                    PlayersRepo.getInstance().findPlayerByLogin(aRecipientLogin).orElseThrow();
+            model.addAttribute("recipient", recipient);
+            return "chat";
+        }
 
 	private AcceptDeclineLinks createAcceptDeclineLinks(Player aOpponent) {
 		LinkDescription acceptLink = new LinkDescription("Принять",
