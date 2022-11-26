@@ -1,0 +1,35 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<title>Мои сообщения</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+	<div align="right">
+		<label th:utext="${userName}"></label>
+		<div><a th:href="@{/messenger}">Сообщения</a></div>
+		<div><a th:href="@{/logout}">Выйти</a></div>
+	</div>
+	<div style="text-align: center">
+		<h1>Мои сообщения</h1>
+		<div>
+			<table border="1" th:align="center">
+				<tr>
+					<th>Отправитель</th>
+				</tr>
+				<tr th:each="chat : ${chats}">
+					<td>
+						<div>
+							<a th:href="${chat.getLink().getLink()}" th:text="${chat.getLink().getText()}" />
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</body>
+
+</html>
