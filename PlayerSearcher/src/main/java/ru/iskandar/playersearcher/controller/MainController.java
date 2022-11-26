@@ -200,6 +200,7 @@ public class MainController {
 
 	private void addCurrentUserName(Model model) {
 		model.addAttribute("userName", getCurrentUser().getName());
+                model.addAttribute("currentUser", getCurrentUser());
 	}
 
 	@RequestMapping(value = { "/addSuggestion" }, method = RequestMethod.GET)

@@ -18,10 +18,13 @@ import lombok.experimental.Accessors;
 @Accessors(prefix = "_")
 public class ChatMessage {
 
-    /** Отправитель */
+    /** Имя отправителя */
     private String _sender;
 
     /** Содержимое */
     private String _content;
+
+    /** Логин получателя */
+    private String _recipientLogin;
 
 }

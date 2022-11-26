@@ -17,16 +17,18 @@
 		<h2 style="color: #ff0000">Похоже, Javascript не поддерживается вашим браузером!</h2>
 	</noscript>
 	<div align="right">
-		<label th:utext="${userName}"></label>
+	    <label hidden id="login" th:utext="${currentUser.getLogin()}"></label>
+		<label th:utext="${currentUser.getName()}"></label>
 		<div><a th:href="@{/logout}">Выйти</a></div>
 	</div>
 	<div id="main-content" class="container">
+	    <label hidden id="recipient" th:utext="${recipient.getLogin()}"></label>
 		<h2 style="text-align:left">Переписка с <span th:text="${recipient.getName()}"></span></h2>
 		<div class="row">
 			<div class="col-md-6">
 				<form class="form-inline">
 					<div class="form-group">
-						<input type="text" id="name" class="form-control">
+						<input type="text" id="message" class="form-control">
 					</div>
 					<button id="send" class="btn btn-default" type="submit">Отправить</button>
 				</form>

@@ -13,12 +13,14 @@ function setConnected(connected) {
 }
 
 function connect() {
+	var currentLogin = $('#login').html();
+	console.log('currentLogin ' + currentLogin);
 	var socket = new SockJS('/playersearcher-websocket');
 	stompClient = Stomp.over(socket);
 	stompClient.connect({}, function(frame) {
 		setConnected(true);
 		console.log('Connected: ' + frame);
-		stompClient.subscribe('/topic/private', function(message) {
+		stompClient.subscribe('/topic/private/' + currentLogin, function(message) {
 			var mess = JSON.parse(message.body);
 			showMessage(mess.sender + ": " + mess.content);
 		});
@@ -33,11 +35,13 @@ function disconnect() {
 	console.log("Disconnected");
 }
 
-function sendName() {
+function sendMessage() {
 	if (!isConnected) {
 		connect();
 	}
-	stompClient.send("/app/chat.sendMessage", {}, JSON.stringify({ 'content': $("#name").val() }));
+	var recipientLogin = $('#recipient').html();
+	console.log('recipientLogin ' + recipientLogin);
+	stompClient.send("/app/chat.sendMessage", {}, JSON.stringify({ 'content': $("#message").val(), 'recipientLogin': $("#recipient").html() }));
 }
 
 function showMessage(message) {
@@ -48,7 +52,7 @@ $(function() {
 	$("form").on('submit', function(e) {
 		e.preventDefault();
 	});
-	$("#send").click(function() { sendName(); });
+	$("#send").click(function() { sendMessage(); });
 	$(document).ready(function() {
 		console.log("ready!");
 		connect();
