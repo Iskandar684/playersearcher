@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+	<div id="navigationPanel" th:fragment="navigationPanel">
+		<div><a th:href="@{/index}">Главная</a></div>
+		<div><a th:href="@{/suggestions}">Поиск игроков</a></div>
+		<div><a th:href="@{/messenger}">Мои сообщения</a></div>
+	</div>
+</body>
+
+</html>
