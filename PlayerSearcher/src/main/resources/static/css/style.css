@@ -24,6 +24,13 @@ table th, table td {
     left: 50px; 
 }
 
+#search {
+    position: fixed;
+    text-align: right;
+    top: 130px; 
+    right: 10px; 
+}
+
 #chat-content {
     max-width: 1000px;
     padding: 2em 3em;

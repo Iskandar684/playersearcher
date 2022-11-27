@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+	<div id="search" th:fragment="search">
+		<h4>Критерии поиска:</h4>
+		<form th:action="@{/searchPlayers}" th:object="${playersSearchParams}" method="POST">
+			<div>
+				<label>Пол: </label> <select th:field="*{gender}">
+					<option value="NONE">неважно</option>
+					<option th:each="gender: ${genders}" th:value="${gender}" th:text="${gender.getText()}" />
+				</select>
+			</div>
+			<br />
+			<div>
+				<label>Уровень: </label> <select th:field="*{playerLevel}">
+					<option value="NONE">неважно</option>
+					<option th:each="playerLevel: ${playerLevels}" th:value="${playerLevel}"
+						th:text="${playerLevel.getText()}" />
+				</select>
+			</div>
+			<br />
+			<div>
+				<label>График: </label> <a href="addSuggestion">Указать</a>
+			</div>
+			<br /> <input type="submit" value="Найти" />
+		</form>
+	</div>
+</body>
+
+</html>
