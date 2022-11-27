@@ -10,9 +10,9 @@
 <body>
 	<div align="right">
 		<label th:utext="${userName}"></label>
-		<div><a th:href="@{/messenger}">Сообщения</a></div>
 		<div><a th:href="@{/logout}">Выйти</a></div>
 	</div>
+	<div th:insert="navigationPanel.html :: navigationPanel"></div>
 	<div style="text-align: center">
 		<h1>Мои сообщения</h1>
 		<div>

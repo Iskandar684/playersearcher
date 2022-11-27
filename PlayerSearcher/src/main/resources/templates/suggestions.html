@@ -8,11 +8,10 @@
 </head>
 
 <body>
-    <div align="right">
-	    <label th:utext="${userName}"></label>
-	    <div><a th:href="@{/messenger}">Сообщения</a></div>	
-	    <div><a th:href="@{/logout}">Выйти</a></div>
-    </div>
+	<div align="right">
+		<label th:utext="${userName}"></label>
+		<div><a th:href="@{/logout}">Выйти</a></div>
+	</div>
 	<div style="text-align: center">
 		<h1>Список игроков в настольный теннис</h1>
 		<div align="right">
@@ -40,6 +39,7 @@
 			</form>
 		</div>
 		<a href="addSuggestion">Указать свой график</a> <br /> <br />
+		<div th:insert="navigationPanel.html :: navigationPanel"></div>
 		<div>
 			<table border="1" th:align="center">
 				<tr>

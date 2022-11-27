@@ -1,31 +1,25 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8"/>
-    <title>Добро пожаловать</title>
-    <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}"/>
+	<meta charset="UTF-8" />
+	<title>Добро пожаловать</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
 </head>
+
 <body>
 
-<div align="right">
-	<label th:utext="${userName}"></label>
-	<div><a th:href="@{/messenger}">Сообщения</a></div>	
-	<div><a th:href="@{/logout}">Выйти</a></div>
-</div>
+	<div align="right">
+		<label th:utext="${userName}"></label>
+		<div><a th:href="@{/logout}">Выйти</a></div>
+	</div>
+	<h1 style="text-align:center"><span th:text="${userName}"></span>, добро пожаловать в сервис поиска игроков в
+		настольный теннис!</h1>
 
-<h1 style="text-align:center"><span th:text="${userName}"></span>, добро пожаловать в сервис поиска игроков в настольный теннис!</h1>
-
-<!--
-
-   In Thymeleaf the equivalent of
-   JSP's ${pageContext.request.contextPath}/edit.html
-   would be @{/edit.html}
-
-   -->
-
-<div align="center">
-    <a th:href="@{/suggestions}">Найти игрока</a>
-</div>
+	<div th:insert="navigationPanel.html :: navigationPanel"></div>
+	<div align="center">
+		<a th:href="@{/suggestions}">Найти игрока</a>
+	</div>
 
 </body>
 

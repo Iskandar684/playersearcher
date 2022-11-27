@@ -14,10 +14,9 @@ table th, table td {
     padding: 5px;
 }
 
-#findButton {
-    position: absolute;
-    text-align: center;
-    width: 100%;
-    top: 50%;
-    left: 0;
+#navigationPanel {
+    position: fixed;
+    text-align: left;
+    top: 150px; 
+    left: 50px; 
 }

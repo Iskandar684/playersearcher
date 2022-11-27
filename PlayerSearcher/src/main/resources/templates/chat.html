@@ -16,12 +16,12 @@
     <div align="right">
         <label hidden id="login" th:utext="${currentUser.getLogin()}"></label>
 	    <label th:utext="${userName}"></label>
-	    <div><a th:href="@{/messenger}">Сообщения</a></div>	
-	    <div><a th:href="@{/logout}">Выйти</a></div>
+	     <div><a th:href="@{/logout}">Выйти</a></div>
     </div>
 	<noscript>
 		<h2 style="color: #ff0000">Похоже, Javascript не поддерживается вашим браузером!</h2>
 	</noscript>
+	<div th:insert="navigationPanel.html :: navigationPanel"></div>
 	<div id="main-content" class="container">
 	    <label hidden id="recipient" th:utext="${recipient.getLogin()}"></label>
 		<h2 style="text-align:left">Переписка с <span th:text="${recipient.getName()}"></span></h2>
