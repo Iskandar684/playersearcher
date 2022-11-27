@@ -6,13 +6,9 @@ table {
     border-collapse: collapse;
 }
 
-table th, table td {
-    padding: 5px;
-}
-
 thead, tbody { display: block; }
 
-tbody {
+#conversationBody {
     height: 700px;
     overflow-y: auto; 
     overflow-x: hidden;
