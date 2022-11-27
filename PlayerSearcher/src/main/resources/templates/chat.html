@@ -21,18 +21,18 @@
 	<label hidden id="recipient" th:utext="${recipient.getLogin()}"></label>
 	<h2 style="text-align:center">Переписка с <span th:text="${recipient.getName()}"></span></h2>
 	<div id="chat-content" width="100%">
-		<table id="conversation" class="table table-striped">
+		<table width="100%" height="100%" id="conversation" class="table table-striped">
 			<thead>
 				<tr>
 					<th></th>
 				</tr>
 			</thead>
-			<tbody id="conversationBody"> </tbody>
+			<tbody width="100%" height="100%" id="conversationBody"> </tbody>
 		</table>
 		<form class="form-inline" width="100%">
 			<div class="form-group" width="100% display:table">
 				<input type="text" id="message" class="form-control"
-					style="display:table-cell; width:85%;  margin-right:10px; margin-top:10px;">
+					style="display:table-cell; width:85%;  margin-right:10px;">
 				<button id="send" class="btn btn-default" type="submit">Отправить</button>
 			</div>
 		</form>

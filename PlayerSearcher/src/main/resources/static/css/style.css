@@ -10,6 +10,14 @@ table th, table td {
     padding: 5px;
 }
 
+thead, tbody { display: block; }
+
+tbody {
+    height: 700px;
+    overflow-y: auto; 
+    overflow-x: hidden;
+}
+
 #userInfo {
     position: fixed;
     text-align: right;
@@ -28,7 +36,7 @@ table th, table td {
     margin-top:250px;
     display:block;
     text-align: center;
-    font-size: 40pt;        
+    font-size: 40pt;
 }
 
 #search {
@@ -51,6 +59,7 @@ table th, table td {
 
 #chat-content {
     max-width: 1000px;
+    height: 80vh;
     padding: 2em 3em;
     margin: 0 auto 20px;
     background-color: #fff;
