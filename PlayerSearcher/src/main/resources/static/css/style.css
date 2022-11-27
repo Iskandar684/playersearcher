@@ -2,10 +2,6 @@ h1 {
     color:#0000FF;
 }
 
-h2 {
-    color:#FF0000;
-}
-
 table {
     border-collapse: collapse;
 }
@@ -19,4 +15,15 @@ table th, table td {
     text-align: left;
     top: 150px; 
     left: 50px; 
+}
+
+#chat-content {
+    max-width: 1000px;
+    padding: 2em 3em;
+    margin: 0 auto 20px;
+    background-color: #fff;
+    border: 1px solid #e5e5e5;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
 }

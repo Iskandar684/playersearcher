@@ -4,8 +4,7 @@
 <head>
 	<meta charset="UTF-8" />
 	<title>Переписка</title>
-	<link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-	<link rel="stylesheet" type="text/css" th:href="@{/css/chat.css}" />
+	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
 	<script src="/webjars/jquery/jquery.min.js"></script>
 	<script src="/webjars/sockjs-client/sockjs.min.js"></script>
 	<script src="/webjars/stomp-websocket/stomp.min.js"></script>
@@ -13,25 +12,25 @@
 </head>
 
 <body>
-    <div align="right">
-        <label hidden id="login" th:utext="${currentUser.getLogin()}"></label>
-	    <label th:utext="${userName}"></label>
-	     <div><a th:href="@{/logout}">Выйти</a></div>
-    </div>
+	<div align="right">
+		<label hidden id="login" th:utext="${currentUser.getLogin()}"></label>
+		<label th:utext="${userName}"></label>
+		<div><a th:href="@{/logout}">Выйти</a></div>
+	</div>
 	<noscript>
 		<h2 style="color: #ff0000">Похоже, Javascript не поддерживается вашим браузером!</h2>
 	</noscript>
 	<div th:insert="navigationPanel.html :: navigationPanel"></div>
-	<div id="main-content" class="container">
-	    <label hidden id="recipient" th:utext="${recipient.getLogin()}"></label>
+	<div id="chat-content" class="container">
+		<label hidden id="recipient" th:utext="${recipient.getLogin()}"></label>
 		<h2 style="text-align:left">Переписка с <span th:text="${recipient.getName()}"></span></h2>
 		<div class="row">
 			<div class="col-md-6">
 				<form class="form-inline">
 					<div class="form-group">
 						<input type="text" id="message" class="form-control">
+						<button id="send" class="btn btn-default" type="submit">Отправить</button>
 					</div>
-					<button id="send" class="btn btn-default" type="submit">Отправить</button>
 				</form>
 			</div>
 		</div>
@@ -40,7 +39,7 @@
 				<table id="conversation" class="table table-striped">
 					<thead>
 						<tr>
-							<th>Сообщения:</th>
+							<th></th>
 						</tr>
 					</thead>
 					<tbody id="conversationBody"> </tbody>
