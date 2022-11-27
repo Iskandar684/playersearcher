@@ -12,37 +12,32 @@
 </head>
 
 <body>
-    <div th:insert="userInfo.html :: userInfo"></div>
+	<div th:insert="userInfo.html :: userInfo"></div>
 	<noscript>
 		<h2 style="color: #ff0000">Похоже, Javascript не поддерживается вашим браузером!</h2>
 	</noscript>
 	<div th:insert="navigationPanel.html :: navigationPanel"></div>
-	<div id="chat-content" class="container">
-		<label hidden id="recipient" th:utext="${recipient.getLogin()}"></label>
-		<h2 style="text-align:left">Переписка с <span th:text="${recipient.getName()}"></span></h2>
-		<div class="row">
-			<div class="col-md-6">
-				<form class="form-inline">
-					<div class="form-group">
-						<input type="text" id="message" class="form-control">
-						<button id="send" class="btn btn-default" type="submit">Отправить</button>
-					</div>
-				</form>
+
+	<label hidden id="recipient" th:utext="${recipient.getLogin()}"></label>
+	<h2 style="text-align:center">Переписка с <span th:text="${recipient.getName()}"></span></h2>
+	<div id="chat-content" width="100%">
+		<table id="conversation" class="table table-striped">
+			<thead>
+				<tr>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody id="conversationBody"> </tbody>
+		</table>
+		<form class="form-inline" width="100%">
+			<div class="form-group" width="100% display:table">
+				<input type="text" id="message" class="form-control"
+					style="display:table-cell; width:85%;  margin-right:10px; margin-top:10px;">
+				<button id="send" class="btn btn-default" type="submit">Отправить</button>
 			</div>
-		</div>
-		<div class="row">
-			<div class="col-md-12">
-				<table id="conversation" class="table table-striped">
-					<thead>
-						<tr>
-							<th></th>
-						</tr>
-					</thead>
-					<tbody id="conversationBody"> </tbody>
-				</table>
-			</div>
-		</div>
+		</form>
 	</div>
+
 </body>
 
 </html>

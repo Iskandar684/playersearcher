@@ -8,18 +8,15 @@
 </head>
 
 <body>
-    <div th:insert="userInfo.html :: userInfo"></div>
+	<div th:insert="userInfo.html :: userInfo"></div>
 	<div th:insert="navigationPanel.html :: navigationPanel"></div>
-	<div style="text-align: center">
+	<div id="messenger-content" style="text-align: center">
 		<h1>Мои сообщения</h1>
 		<div>
-			<table border="1" th:align="center">
-				<tr>
-					<th>Отправитель</th>
-				</tr>
-				<tr th:each="chat : ${chats}">
+			<table width="100%" border="1">
+				<tr align="left" th:each="chat : ${chats}">
 					<td>
-						<div>
+						<div style="height: 40px; overflow:hidden;">
 							<a th:href="${chat.getLink().getLink()}" th:text="${chat.getLink().getText()}" />
 						</div>
 					</td>

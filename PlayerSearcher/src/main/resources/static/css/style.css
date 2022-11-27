@@ -38,6 +38,17 @@ table th, table td {
     right: 10px; 
 }
 
+#messenger-content {
+    max-width: 1000px;
+    padding: 2em 3em;
+    margin: 0 auto 20px;
+    background-color: #fff;
+    border: 1px solid #e5e5e5;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+}
+
 #chat-content {
     max-width: 1000px;
     padding: 2em 3em;
