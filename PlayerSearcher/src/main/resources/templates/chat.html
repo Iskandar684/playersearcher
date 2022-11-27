@@ -12,11 +12,7 @@
 </head>
 
 <body>
-	<div align="right">
-		<label hidden id="login" th:utext="${currentUser.getLogin()}"></label>
-		<label th:utext="${userName}"></label>
-		<div><a th:href="@{/logout}">Выйти</a></div>
-	</div>
+    <div th:insert="userInfo.html :: userInfo"></div>
 	<noscript>
 		<h2 style="color: #ff0000">Похоже, Javascript не поддерживается вашим браузером!</h2>
 	</noscript>

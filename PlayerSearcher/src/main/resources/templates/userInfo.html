@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8" />
+	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+</head>
+
+<body>
+	<div id="userInfo" th:fragment="userInfo">
+		<label hidden id="login" th:utext="${currentUser.getLogin()}"></label>
+		<label th:utext="${currentUser.getName()}"></label>
+		<div><a th:href="@{/logout}">Выйти</a></div>
+	</div>
+</body>
+
+</html>

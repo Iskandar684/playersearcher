@@ -10,6 +10,13 @@ table th, table td {
     padding: 5px;
 }
 
+#userInfo {
+    position: fixed;
+    text-align: right;
+    top: 15px; 
+    right: 10px; 
+}
+
 #navigationPanel {
     position: fixed;
     text-align: left;

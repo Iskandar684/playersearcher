@@ -8,11 +8,7 @@
 </head>
 
 <body>
-
-	<div align="right">
-		<label th:utext="${userName}"></label>
-		<div><a th:href="@{/logout}">Выйти</a></div>
-	</div>
+	<div th:insert="userInfo.html :: userInfo"></div>
 	<h1 style="text-align:center"><span th:text="${userName}"></span>, добро пожаловать в сервис поиска игроков в
 		настольный теннис!</h1>
 
