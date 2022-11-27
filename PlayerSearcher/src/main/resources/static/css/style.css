@@ -24,6 +24,13 @@ table th, table td {
     left: 50px; 
 }
 
+#findButton {
+    margin-top:250px;
+    display:block;
+    text-align: center;
+    font-size: 40pt;        
+}
+
 #search {
     position: fixed;
     text-align: right;
