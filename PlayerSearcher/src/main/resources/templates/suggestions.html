@@ -15,7 +15,7 @@
 		<a href="addSuggestion">Указать свой график</a> <br /> <br />
 		<div th:insert="navigationPanel.html :: navigationPanel"></div>
 		<div>
-			<table border="1" th:align="center">
+			<table border="1" th:align="center" width="1000px">
 				<tr>
 					<th>Имя</th>
 					<th>Пол</th>
@@ -23,12 +23,12 @@
 					<th>График</th>
 					<th>Встреча</th>
 				</tr>
-				<tr th:each="suggestion : ${suggestions}">
-					<td th:utext="${suggestion.getPlayer().getName()}">...</td>
-					<td align="center" th:utext="${suggestion.getPlayer().getGender()}">...</td>
-					<td th:utext="${suggestion.getPlayer().getLevel()}">...</td>
-					<td th:utext="${suggestion.getSchedule()}">...</td>
-					<td>
+				<tr align="left" th:each="suggestion : ${suggestions}">
+					<td width="110px" th:utext="${suggestion.getPlayer().getName()}">...</td>
+					<td width="110px" th:utext="${suggestion.getPlayer().getGender()}">...</td>
+					<td width="110px" th:utext="${suggestion.getPlayer().getLevel()}">...</td>
+					<td width="470px" th:utext="${suggestion.getSchedule()}">...</td>
+					<td width="200px" align="center">
 						<label th:utext="${suggestion.getDescription()}"></label>
 						<div th:if="${suggestion.hasCreateOrEditSuggestionLink()}">
 							<a th:href="${suggestion.getCreateOrEditSuggestionLink().getLink()}"
