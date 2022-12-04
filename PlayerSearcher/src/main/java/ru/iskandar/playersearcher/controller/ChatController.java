@@ -19,6 +19,9 @@ public class ChatController {
     @Autowired
     private SimpMessagingTemplate _messagingTemplate;
 
+    @Autowired
+    private EmailService _emailService;
+
     @MessageMapping("/chat.sendMessage")
     // @SendTo("/topic/private")
     public void sendMessage(ChatMessage aMessage, Principal aSenderPrincipal) throws Exception {
@@ -33,6 +36,13 @@ public class ChatController {
         log.info("send mess senderTopicId " + senderTopicId);
         _messagingTemplate.convertAndSend(senderTopicId, aMessage);
         // return ChatMessage.builder().sender(sender).content(message.getContent()).build();
+
+        Player recipient = PlayersRepo.getInstance().findPlayerByLogin(aMessage.getRecipientLogin())
+                .orElseThrow();
+        // TODO отправлять сообщение только если сообщение не было прочитано в течении 10 минут.
+        _emailService.sendEmail(recipient.getEmail(), "Новое личное сообщение",
+                String.format("%s отправил вам личное сообщение.",
+                        sender));
     }
 
 }

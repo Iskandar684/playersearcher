@@ -1,17 +1,21 @@
 package ru.iskandar.playersearcher.model;
 
-import lombok.*;
-import lombok.experimental.Accessors;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import lombok.Builder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.experimental.Accessors;
+
 @Getter
+@Builder
 @Accessors(prefix = "_")
-@RequiredArgsConstructor
 @EqualsAndHashCode(of = "_login")
 public class Player implements UserDetails {
 
@@ -32,6 +36,9 @@ public class Player implements UserDetails {
 
 	@NonNull
 	private final PlayerLevel _level;
+
+        @NonNull
+        private final String _email;
 
 	private final List<Role> _roles = Collections.singletonList(new Role("USER"));
 

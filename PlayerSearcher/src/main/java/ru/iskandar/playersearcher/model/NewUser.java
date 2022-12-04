@@ -1,9 +1,10 @@
 package ru.iskandar.playersearcher.model;
 
-import lombok.*;
-import lombok.experimental.Accessors;
-
 import java.util.Objects;
+
+import lombok.Getter;
+import lombok.Setter;
+import lombok.experimental.Accessors;
 
 @Getter
 @Accessors(prefix = "_")
@@ -22,6 +23,8 @@ public class NewUser {
 
     private PlayerLevel _level;
 
+    private String _email;
+
     public boolean isEmpty() {
         boolean isEmpty = _login == null || _login.isEmpty();
         isEmpty = isEmpty || _password == null || _password.isEmpty();
@@ -29,6 +32,7 @@ public class NewUser {
         isEmpty = isEmpty || _name == null || _name.isEmpty();
         isEmpty = isEmpty || _gender == null ;
         isEmpty = isEmpty || _level == null ;
+        isEmpty = isEmpty || _email == null;
         return isEmpty;
     }
 
