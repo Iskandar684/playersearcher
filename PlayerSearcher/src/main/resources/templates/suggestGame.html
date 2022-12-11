@@ -1,27 +1,22 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8" />
-<title>Назначение встречи для игры</title>
-<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+	<meta charset="UTF-8" />
+	<title>Назначение встречи для игры</title>
+	<link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
 </head>
+
 <body>
-	<div align="right">
-		<label th:utext="${userName}"></label>
-		<div>
-			<a th:href="@{/logout}">Выйти</a>
-		</div>
-	</div>
+	<div th:insert="userInfo.html :: userInfo"></div>
 
 	<div style="text-align: center">
 		<h3>
-			<span th:text="${userName}"></span>, пожалуйста, выберите дату и
-			время игры c <span
-				th:text="${suggestGameForm.getOpponent().getName()}"></span>
+			<span th:text="${currentUser.getName()}"></span>, пожалуйста, выберите дату и
+			время игры c <span th:text="${suggestGameForm.getOpponent().getName()}"></span>
 		</h3>
 
-		<form th:action="${suggestGameForm.getSaveAction()}" th:object="${suggestGameForm}"
-			method="POST">
+		<form th:action="${suggestGameForm.getSaveAction()}" th:object="${suggestGameForm}" method="POST">
 			<div>
 				<table border="1" th:align="center">
 					<tr>
@@ -36,20 +31,13 @@
 					</tr>
 					<tr th:each="interval : ${intervals}">
 						<td th:utext="${interval}">...</td>
-						<td><input type="checkbox"
-							th:field="*{schedule.intervalsByDay1}" th:value="${interval}" /></td>
-						<td><input type="checkbox"
-							th:field="*{schedule.intervalsByDay2}" th:value="${interval}" /></td>
-						<td><input type="checkbox"
-							th:field="*{schedule.intervalsByDay3}" th:value="${interval}" /></td>
-						<td><input type="checkbox"
-							th:field="*{schedule.intervalsByDay4}" th:value="${interval}" /></td>
-						<td><input type="checkbox"
-							th:field="*{schedule.intervalsByDay5}" th:value="${interval}" /></td>
-						<td><input type="checkbox"
-							th:field="*{schedule.intervalsByDay6}" th:value="${interval}" /></td>
-						<td><input type="checkbox"
-							th:field="*{schedule.intervalsByDay7}" th:value="${interval}" /></td>
+						<td><input type="checkbox" th:field="*{schedule.intervalsByDay1}" th:value="${interval}" /></td>
+						<td><input type="checkbox" th:field="*{schedule.intervalsByDay2}" th:value="${interval}" /></td>
+						<td><input type="checkbox" th:field="*{schedule.intervalsByDay3}" th:value="${interval}" /></td>
+						<td><input type="checkbox" th:field="*{schedule.intervalsByDay4}" th:value="${interval}" /></td>
+						<td><input type="checkbox" th:field="*{schedule.intervalsByDay5}" th:value="${interval}" /></td>
+						<td><input type="checkbox" th:field="*{schedule.intervalsByDay6}" th:value="${interval}" /></td>
+						<td><input type="checkbox" th:field="*{schedule.intervalsByDay7}" th:value="${interval}" /></td>
 					</tr>
 				</table>
 			</div>
@@ -59,8 +47,8 @@
 
 		<br />
 
-		<div th:if="${errorMessage}" th:utext="${errorMessage}"
-			style="color: red; font-style: italic;">...</div>
+		<div th:if="${errorMessage}" th:utext="${errorMessage}" style="color: red; font-style: italic;">...</div>
 	</div>
 </body>
+
 </html>

@@ -61,7 +61,7 @@ public class MainController {
     @RequestMapping(value = {"/", "/index"}, method = RequestMethod.GET)
     public String index(Model model) {
         model.addAttribute("message", message);
-        addCurrentUserName(model);
+        ModelAttributes.fill(model, getCurrentUser());
         return "index";
     }
 
@@ -83,8 +83,8 @@ public class MainController {
                 .sorted(Comparator.comparing(suggestion -> suggestion.getPlayer().getName()))
                 .collect(Collectors.toList());
         suggestions.forEach(this::fillSuggestion);
+        ModelAttributes.fill(model, getCurrentUser());
         model.addAttribute("suggestions", suggestions);
-        addCurrentUserName(model);
         model.addAttribute("genders", Gender.values());
         model.addAttribute("playerLevels", PlayerLevel.values());
         model.addAttribute("playersSearchParams", searchParams);
@@ -185,10 +185,6 @@ public class MainController {
         return res;
     }
 
-    private void addCurrentUserName(Model model) {
-        model.addAttribute("currentUser", getCurrentUser());
-    }
-
     @RequestMapping(value = {"/addSuggestion"}, method = RequestMethod.GET)
     public String showAddSuggestionPage(Model model) {
         SuggestionForm suggestionForm = new SuggestionForm();
@@ -232,8 +228,7 @@ public class MainController {
         model.addAttribute("suggestionForm", aSuggestionForm);
         List<HourInterval> intervals = new HourIntervalFactory().create();
         model.addAttribute("intervals", intervals);
-        addCurrentUserName(model);
-
+        ModelAttributes.fill(model, getCurrentUser());
     }
 
     @RequestMapping("/login")
@@ -294,7 +289,7 @@ public class MainController {
                 suggestion.getSchedule().getNotEmptyIntervals().stream().sorted()
                         .collect(Collectors.toList());
         model.addAttribute("intervals", intervals);
-        addCurrentUserName(model);
+        ModelAttributes.fill(model, getCurrentUser());
         return "suggestGame";
     }
 

@@ -22,6 +22,13 @@ public class ChatMessageRepo {
         _messages.add(aMessage);
     }
 
+    public long getUnviewedMessagesCount(@NonNull String aRecipientLogin) {
+        return _messages.stream()
+                .filter(Predicate.not(ChatMessage::isViewed))
+                .filter(mess -> aRecipientLogin.equals(mess.getRecipientLogin()))
+                .count();
+    }
+
     public List<ChatMessage> getMessagesBySenderAndRecipient(@NonNull String aSenderLogin,
             @NonNull String aRecipientLogin) {
         Predicate<ChatMessage> filter = message -> {

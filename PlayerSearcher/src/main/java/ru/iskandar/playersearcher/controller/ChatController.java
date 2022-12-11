@@ -79,7 +79,7 @@ public class ChatController {
     @RequestMapping(value = {"/chat"}, method = RequestMethod.GET)
     public String getChat(Model model, @ModelAttribute("login") String aRecipientLogin) {
         Player currentUser = getCurrentUser();
-        addCurrentUserName(model);
+        ModelAttributes.fill(model, currentUser);
         Player recipient =
                 PlayersRepo.getInstance().findPlayerByLogin(aRecipientLogin).orElseThrow();
         model.addAttribute("recipient", recipient);
@@ -95,7 +95,7 @@ public class ChatController {
     @RequestMapping(value = {"/openChat"}, method = RequestMethod.GET)
     public String openChat(Model model, @ModelAttribute("login") String aLogin) {
         System.out.println("openChat " + "  aLogin " + aLogin);
-        addCurrentUserName(model);
+        ModelAttributes.fill(model, getCurrentUser());
         Player recipient = PlayersRepo.getInstance().findPlayerByLogin(aLogin).orElseThrow();
         model.addAttribute("recipient", recipient.getName());
         return String.format("redirect:/chat?login=%s", aLogin);
@@ -103,8 +103,8 @@ public class ChatController {
 
     @RequestMapping(value = {"/messenger"}, method = RequestMethod.GET)
     public String getMessenger(Model model) {
-        addCurrentUserName(model);
         Player currentUser = getCurrentUser();
+        ModelAttributes.fill(model, currentUser);
         List<ChatMessage> messages = ChatMessageRepo.INSTANCE
                 .getMessagesBySenderAndRecipient(currentUser.getLogin(), currentUser.getLogin());
         Map<String, Long> unviewedMessCount = new HashMap<>();
@@ -134,9 +134,6 @@ public class ChatController {
         return "messenger";
     }
 
-    private void addCurrentUserName(Model model) {
-        model.addAttribute("currentUser", getCurrentUser());
-    }
 
     private Player getCurrentUser() {
         SecurityContext context = SecurityContextHolder.getContext();
