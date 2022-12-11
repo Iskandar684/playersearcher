@@ -42,6 +42,7 @@ function sendMessage() {
 	var recipientLogin = $('#recipient').html();
 	console.log('recipientLogin ' + recipientLogin);
 	stompClient.send("/app/chat.sendMessage", {}, JSON.stringify({ 'content': $("#message").val(), 'recipientLogin': $("#recipient").html() }));
+	$("#message").val("")
 }
 
 function showMessage(message) {
