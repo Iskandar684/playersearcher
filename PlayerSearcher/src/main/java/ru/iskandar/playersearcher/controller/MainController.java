@@ -1,6 +1,7 @@
 package ru.iskandar.playersearcher.controller;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -81,6 +82,7 @@ public class MainController {
                 PlayersSearchParamsRepo.INSTANCE.getParams(getCurrentUser().getLogin());
         List<Suggestion> suggestions = SuggestionsRepo.getInstance().getSuggestions();
         suggestions = suggestions.stream().filter(suggestion -> filter(suggestion, searchParams))
+                .sorted(Comparator.comparing(suggestion -> suggestion.getPlayer().getName()))
                 .collect(Collectors.toList());
         suggestions.forEach(this::fillSuggestion);
         model.addAttribute("suggestions", suggestions);
