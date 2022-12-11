@@ -22,12 +22,9 @@
 	<h2 style="text-align:center">Переписка с <span th:text="${recipient.getName()}"></span></h2>
 	<div id="chat-content" width="100%">
 		<table width="100%" height="100%" id="conversation" class="table table-striped">
-			<thead>
-				<tr>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody width="100%" height="100%" id="conversationBody"> </tbody>
+			<tr align="left" th:each="message : ${messages}">
+				<td th:utext="${message.getSenderAndContent()}">...</td>
+			</tr>
 		</table>
 		<form class="form-inline" width="100%">
 			<div class="form-group" width="100% display:table">

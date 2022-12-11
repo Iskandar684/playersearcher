@@ -22,7 +22,7 @@ function connect() {
 		console.log('Connected: ' + frame);
 		stompClient.subscribe('/topic/private/' + currentLogin, function(message) {
 			var mess = JSON.parse(message.body);
-			showMessage(mess.sender + ": " + mess.content);
+			showMessage(mess.senderAndContent);
 		});
 	});
 }
@@ -46,7 +46,7 @@ function sendMessage() {
 }
 
 function showMessage(message) {
-	$("#conversationBody").append("<tr><td>" + message + "</td></tr>");
+	$("#conversation").append("<tr><td>" + message + "</td></tr>");
 }
 
 $(function() {

@@ -1,5 +1,7 @@
 package ru.iskandar.playersearcher.model;
 
+import java.util.Date;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,13 +20,21 @@ import lombok.experimental.Accessors;
 @Accessors(prefix = "_")
 public class ChatMessage {
 
-    /** Имя отправителя */
-    private String _sender;
+    /** Отправитель */
+    private Player _sender;
 
     /** Содержимое */
     private String _content;
 
     /** Логин получателя */
     private String _recipientLogin;
+
+    /** Дата отправки */
+    @Builder.Default
+    private Date _date = new Date();
+
+    public String getSenderAndContent() {
+        return String.format("%s: %s", _sender.getName(), _content);
+    }
 
 }

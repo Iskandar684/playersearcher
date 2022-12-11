@@ -174,15 +174,6 @@ public class MainController {
         return String.format("redirect:/chat?login=%s", aLogin);
     }
 
-    @RequestMapping(value = {"/chat"}, method = RequestMethod.GET)
-    public String getChat(Model model, @ModelAttribute("login") String aRecipientLogin) {
-        addCurrentUserName(model);
-        Player recipient =
-                PlayersRepo.getInstance().findPlayerByLogin(aRecipientLogin).orElseThrow();
-        model.addAttribute("recipient", recipient);
-        return "chat";
-    }
-
     @RequestMapping(value = {"/messenger"}, method = RequestMethod.GET)
     public String getMessenger(Model model) {
         addCurrentUserName(model);
@@ -229,7 +220,6 @@ public class MainController {
     }
 
     private void addCurrentUserName(Model model) {
-        model.addAttribute("userName", getCurrentUser().getName());
         model.addAttribute("currentUser", getCurrentUser());
     }
 

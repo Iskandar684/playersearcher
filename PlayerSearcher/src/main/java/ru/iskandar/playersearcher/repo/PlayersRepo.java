@@ -24,7 +24,8 @@ public class PlayersRepo {
 
     public PlayersRepo() {
         // FIXME
-        String email = "playersearcher@rambler.ru";
+        // String email = "playersearcher@rambler.ru";
+        String email = null;
         Player pl1 = Player.builder().login("anton").password(passwordEncoder.encode("anton"))
                 .name("Антон").gender(Gender.MALE).level(PlayerLevel.PROFESSIONAL)
                 .email(email).build();

@@ -1,16 +1,27 @@
 package ru.iskandar.playersearcher.controller;
 
 import java.security.Principal;
+import java.util.List;
+import java.util.Optional;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import lombok.extern.java.Log;
 import ru.iskandar.playersearcher.model.ChatMessage;
 import ru.iskandar.playersearcher.model.Player;
+import ru.iskandar.playersearcher.repo.ChatMessageRepo;
 import ru.iskandar.playersearcher.repo.PlayersRepo;
 
 @Log
@@ -26,8 +37,12 @@ public class ChatController {
     @MessageMapping("/chat.sendMessage")
     // @SendTo("/topic/private")
     public void sendMessage(ChatMessage aMessage, Principal aSenderPrincipal) throws Exception {
-        String sender = PlayersRepo.getInstance().findPlayerByLogin(aSenderPrincipal.getName())
-                .map(Player::getName).orElseGet(aSenderPrincipal::getName);
+        if (StringUtils.isEmpty(aMessage.getContent())) {
+            return;
+        }
+        ChatMessageRepo.INSTANCE.addMessage(aMessage);
+        Player sender = PlayersRepo.getInstance().findPlayerByLogin(aSenderPrincipal.getName())
+                .orElseThrow();
         aMessage.setSender(sender);
         String recipientTopicId = String.format("/topic/private/%s", aMessage.getRecipientLogin());
         log.info("send mess recipientTopicId " + recipientTopicId);
@@ -44,8 +59,30 @@ public class ChatController {
             // TODO отправлять сообщение только если сообщение не было прочитано в течении 10 минут.
             _emailService.sendEmail(recipient.getEmail(), "Новое личное сообщение",
                     String.format("%s отправил вам личное сообщение.",
-                            sender));
+                            sender.getName()));
         }
+    }
+
+    @RequestMapping(value = {"/chat"}, method = RequestMethod.GET)
+    public String getChat(Model model, @ModelAttribute("login") String aRecipientLogin) {
+        Player currentUser = getCurrentUser();
+        model.addAttribute("currentUser", currentUser);
+        Player recipient =
+                PlayersRepo.getInstance().findPlayerByLogin(aRecipientLogin).orElseThrow();
+        model.addAttribute("recipient", recipient);
+        List<ChatMessage> messages = ChatMessageRepo.INSTANCE
+                .getMessagesBySenderAndRecipient(currentUser.getLogin(), aRecipientLogin);
+        model.addAttribute("messages", messages);
+        return "chat";
+    }
+
+    private Player getCurrentUser() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        UserDetails principal = (UserDetails) context.getAuthentication().getPrincipal();
+        Optional<Player> player =
+                PlayersRepo.getInstance().findPlayerByLogin(principal.getUsername());
+        return player
+                .orElseThrow(() -> new IllegalStateException("Не определен текущий пользователь."));
     }
 
 }
