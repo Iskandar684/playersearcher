@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.util.Strings;
@@ -21,11 +20,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import lombok.NonNull;
 import ru.iskandar.playersearcher.form.SuggestGameForm;
 import ru.iskandar.playersearcher.form.SuggestionForm;
 import ru.iskandar.playersearcher.model.AcceptDeclineLinks;
-import ru.iskandar.playersearcher.model.ChatInfo;
 import ru.iskandar.playersearcher.model.Gender;
 import ru.iskandar.playersearcher.model.HourInterval;
 import ru.iskandar.playersearcher.model.HourIntervalFactory;
@@ -151,40 +148,9 @@ public class MainController {
             return new LinkDescription("Отменить", cancelLink);
         }).orElse(null);
         aSuggestion.setCancelSuggestionLink(cancelLinkDescription);
-        if (!currentUser.equals(aSuggestion.getPlayer())) {
-            aSuggestion.setChatLink(createChatLink(aSuggestion));
-        }
-    }
-
-    private LinkDescription createChatLink(@NonNull Suggestion aSuggestion) {
-        return createChatLink("Написать", aSuggestion.getPlayer());
-    }
-
-    private LinkDescription createChatLink(@NonNull String aText, @NonNull Player aPlayer) {
-        String link = String.format("%s%s", "/openChat?login=", aPlayer.getLogin());
-        return new LinkDescription(aText, link);
-    }
-
-    @RequestMapping(value = {"/openChat"}, method = RequestMethod.GET)
-    public String openChat(Model model, @ModelAttribute("login") String aLogin) {
-        System.out.println("openChat " + "  aLogin " + aLogin);
-        addCurrentUserName(model);
-        Player recipient = PlayersRepo.getInstance().findPlayerByLogin(aLogin).orElseThrow();
-        model.addAttribute("recipient", recipient.getName());
-        return String.format("redirect:/chat?login=%s", aLogin);
-    }
-
-    @RequestMapping(value = {"/messenger"}, method = RequestMethod.GET)
-    public String getMessenger(Model model) {
-        addCurrentUserName(model);
-        Player currentUser = getCurrentUser();
-        List<ChatInfo> chats = PlayersRepo.getInstance().getPlayers().stream()
-                .filter(Predicate.not(currentUser::equals))
-                .map((player -> ChatInfo.builder().sender(player)
-                        .link(createChatLink(player.getName(), player)).build()))
-                .collect(Collectors.toList());
-        model.addAttribute("chats", chats);
-        return "messenger";
+        LinkDescription chatLink = currentUser.equals(aSuggestion.getPlayer()) ? null
+                : ChatLinkCreator.createChatLink(aSuggestion);
+        aSuggestion.setChatLink(chatLink);
     }
 
     private AcceptDeclineLinks createAcceptDeclineLinks(Player aOpponent) {

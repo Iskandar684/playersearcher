@@ -3,6 +3,8 @@ package ru.iskandar.playersearcher.controller;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.util.Strings;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import lombok.extern.java.Log;
+import ru.iskandar.playersearcher.model.ChatInfo;
 import ru.iskandar.playersearcher.model.ChatMessage;
 import ru.iskandar.playersearcher.model.Player;
 import ru.iskandar.playersearcher.repo.ChatMessageRepo;
@@ -66,7 +69,7 @@ public class ChatController {
     @RequestMapping(value = {"/chat"}, method = RequestMethod.GET)
     public String getChat(Model model, @ModelAttribute("login") String aRecipientLogin) {
         Player currentUser = getCurrentUser();
-        model.addAttribute("currentUser", currentUser);
+        addCurrentUserName(model);
         Player recipient =
                 PlayersRepo.getInstance().findPlayerByLogin(aRecipientLogin).orElseThrow();
         model.addAttribute("recipient", recipient);
@@ -74,6 +77,32 @@ public class ChatController {
                 .getMessagesBySenderAndRecipient(currentUser.getLogin(), aRecipientLogin);
         model.addAttribute("messages", messages);
         return "chat";
+    }
+
+    @RequestMapping(value = {"/openChat"}, method = RequestMethod.GET)
+    public String openChat(Model model, @ModelAttribute("login") String aLogin) {
+        System.out.println("openChat " + "  aLogin " + aLogin);
+        addCurrentUserName(model);
+        Player recipient = PlayersRepo.getInstance().findPlayerByLogin(aLogin).orElseThrow();
+        model.addAttribute("recipient", recipient.getName());
+        return String.format("redirect:/chat?login=%s", aLogin);
+    }
+
+    @RequestMapping(value = {"/messenger"}, method = RequestMethod.GET)
+    public String getMessenger(Model model) {
+        addCurrentUserName(model);
+        Player currentUser = getCurrentUser();
+        List<ChatInfo> chats = PlayersRepo.getInstance().getPlayers().stream()
+                .filter(Predicate.not(currentUser::equals))
+                .map((player -> ChatInfo.builder().sender(player)
+                        .link(ChatLinkCreator.createChatLink(player.getName(), player)).build()))
+                .collect(Collectors.toList());
+        model.addAttribute("chats", chats);
+        return "messenger";
+    }
+
+    private void addCurrentUserName(Model model) {
+        model.addAttribute("currentUser", getCurrentUser());
     }
 
     private Player getCurrentUser() {

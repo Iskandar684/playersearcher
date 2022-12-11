@@ -25,6 +25,7 @@
 			<tr align="left" th:each="message : ${messages}">
 				<td th:utext="${message.getSenderAndContent()}">...</td>
 			</tr>
+			<tbody></tbody>
 		</table>
 		<form class="form-inline" width="100%">
 			<div class="form-group" width="100% display:table">
