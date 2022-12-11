@@ -17,7 +17,7 @@
 				<tr align="left" width="100%" th:each="chat : ${chats}">
 					<td width="100%">
 						<div style="height: 40px; width: 1000px; overflow:hidden;">
-							<a th:href="${chat.getLink().getLink()}" th:text="${chat.getLink().getText()}" />
+							<a th:href="${chat.getLink().getLink()}" th:text="${chat.getText()}" />
 						</div>
 					</td>
 				</tr>

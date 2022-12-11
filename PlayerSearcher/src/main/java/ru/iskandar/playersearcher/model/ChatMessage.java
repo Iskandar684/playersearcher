@@ -33,6 +33,9 @@ public class ChatMessage {
     @Builder.Default
     private Date _date = new Date();
 
+    /** Флаг "просмотренности" сообщения */
+    private boolean _viewed;
+
     public String getSenderAndContent() {
         return String.format("%s: %s", _sender.getName(), _content);
     }

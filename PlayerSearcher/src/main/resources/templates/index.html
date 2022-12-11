@@ -9,8 +9,7 @@
 
 <body>
 	<div th:insert="userInfo.html :: userInfo"></div>
-	<h1 style="text-align:center"><span th:text="${userName}"></span>, добро пожаловать в сервис поиска игроков в
-		настольный теннис!</h1>
+	<h1 style="text-align:center"><span th:text="${currentUser.getName()}"></span>, добро пожаловать в сервис поиска игроков в настольный теннис!</h1>
 
 	<div th:insert="navigationPanel.html :: navigationPanel"></div>
 	<div id="findButton">

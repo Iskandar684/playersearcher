@@ -1,8 +1,13 @@
 package ru.iskandar.playersearcher.controller;
 
 import java.security.Principal;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -58,6 +63,11 @@ public class ChatController {
 
         Player recipient = PlayersRepo.getInstance().findPlayerByLogin(aMessage.getRecipientLogin())
                 .orElseThrow();
+        ChatMessageRepo.INSTANCE
+                .getMessagesBySenderAndRecipient(aSenderPrincipal.getName(), recipient.getLogin())
+                .stream()
+                .filter(message -> aSenderPrincipal.getName().equals(message.getRecipientLogin()))
+                .forEach(message -> message.setViewed(true));
         if (Strings.isNotEmpty(recipient.getEmail())) {
             // TODO отправлять сообщение только если сообщение не было прочитано в течении 10 минут.
             _emailService.sendEmail(recipient.getEmail(), "Новое личное сообщение",
@@ -75,6 +85,9 @@ public class ChatController {
         model.addAttribute("recipient", recipient);
         List<ChatMessage> messages = ChatMessageRepo.INSTANCE
                 .getMessagesBySenderAndRecipient(currentUser.getLogin(), aRecipientLogin);
+        messages.stream()
+                .filter(message -> currentUser.getLogin().equals(message.getRecipientLogin()))
+                .forEach(message -> message.setViewed(true));
         model.addAttribute("messages", messages);
         return "chat";
     }
@@ -92,10 +105,30 @@ public class ChatController {
     public String getMessenger(Model model) {
         addCurrentUserName(model);
         Player currentUser = getCurrentUser();
-        List<ChatInfo> chats = PlayersRepo.getInstance().getPlayers().stream()
-                .filter(Predicate.not(currentUser::equals))
-                .map((player -> ChatInfo.builder().sender(player)
-                        .link(ChatLinkCreator.createChatLink(player.getName(), player)).build()))
+        List<ChatMessage> messages = ChatMessageRepo.INSTANCE
+                .getMessagesBySenderAndRecipient(currentUser.getLogin(), currentUser.getLogin());
+        Map<String, Long> unviewedMessCount = new HashMap<>();
+        for (ChatMessage mess : messages) {
+            if (!mess.isViewed() && currentUser.getLogin().equals(mess.getRecipientLogin())) {
+                String senderLogin = mess.getSender().getLogin();
+                long count =
+                        unviewedMessCount.computeIfAbsent(senderLogin, login -> 0L);
+                count++;
+                unviewedMessCount.put(senderLogin, count);
+            }
+        }
+        Set<String> logins = messages.stream()
+                .map(mess -> Set.of(mess.getRecipientLogin(), mess.getSender().getLogin()))
+                .flatMap(Collection::stream).filter(Predicate.not(currentUser.getLogin()::equals))
+                .collect(Collectors.toSet());
+        List<ChatInfo> chats = logins.stream()
+                .map(login -> PlayersRepo.getInstance().findPlayerByLogin(login).orElseThrow())
+                .sorted(Comparator.comparing(Player::getName))
+                .map(player -> ChatInfo.builder().sender(player)
+                        .link(ChatLinkCreator.createChatLink(player.getName(), player))
+                        .unviewedMessagesCount(unviewedMessCount.computeIfAbsent(player.getLogin(),
+                                login -> 0L))
+                        .build())
                 .collect(Collectors.toList());
         model.addAttribute("chats", chats);
         return "messenger";

@@ -9,8 +9,12 @@ import ru.iskandar.playersearcher.model.Suggestion;
 @UtilityClass
 public class ChatLinkCreator {
 
-    public LinkDescription createChatLink(@NonNull String aText, @NonNull Player aPlayer) {
-        String link = String.format("%s%s", "/openChat?login=", aPlayer.getLogin());
+    public LinkDescription createChatLink(@NonNull String aText, @NonNull Player aRecipient) {
+        return createChatLink(aText, aRecipient.getLogin());
+    }
+
+    public LinkDescription createChatLink(@NonNull String aText, @NonNull String aRecipientLogin) {
+        String link = String.format("%s%s", "/openChat?login=", aRecipientLogin);
         return new LinkDescription(aText, link);
     }
 

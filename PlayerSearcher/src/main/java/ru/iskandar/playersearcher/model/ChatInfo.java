@@ -16,4 +16,14 @@ public class ChatInfo {
     @NonNull
     private final LinkDescription _link;
 
+    /** Количество непросмотренных сообщений */
+    private final long _unviewedMessagesCount;
+
+    public String getText() {
+        if (_unviewedMessagesCount == 0) {
+            return _sender.getName();
+        }
+        return String.format("%s (%d)", _sender.getName(), _unviewedMessagesCount);
+    }
+
 }
