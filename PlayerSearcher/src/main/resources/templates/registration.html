@@ -1,56 +1,58 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <title>Регистрация в сервисе поиска игроков</title>
+	<title>Регистрация в сервисе поиска игроков</title>
 </head>
+
 <body>
-<div style="text-align:center">
-    <h2 style="text-align:center">Регистрация в сервисе поиска игроков в настольный теннис!</h2>
-    <div th:if="${errorMessage}" th:utext="${errorMessage}"
-         style="color:red;font-style:italic;">
-        ...
-    </div>
-    <h3>Пожалуйста, заполните поля:</h3>
-    <form th:action="@{/registration}" th:object="${newUser}" method="post">
-        <table th:align="center">
-            <tr>
-                <td th:align="right"><label>Имя:</label></td>
-                <td><input type="text" th:field="*{name}"></td>
-            </tr>
-            <tr>
-                <td th:align="right"><label>Пол:</label></td>
-                <td><select style="width:100%" th:field="*{gender}">
-                    <option th:each="gender : ${genders}"
-                            th:value="${gender}"
-                            th:text="${gender}"></option>
-                </select></td>
-            </tr>
-            <tr>
-                <td th:align="right"><label>Уровень:</label></td>
-                <td><select style="width:100%" th:field="*{level}">
-                    <option th:each="level : ${levels}"
-                            th:value="${level}"
-                            th:text="${level}"></option>
-                </select></td>
-            </tr>
-            <tr>
-                <td th:align="right"><label>Логин:</label></td>
-                <td><input type="text" th:field="*{login}"/></td>
-            </tr>
-            <tr>
-                <td th:align="right"><label>Пароль:</label></td>
-                <td><input type="password" th:field="*{password}"></td>
-            </tr>
-            <tr>
-                <td th:align="right"><label>Пароль ещё раз:</label></td>
-                <td><input type="password" th:field="*{passwordConfirm}"></td>
-            </tr>
-            <tr>
-                <td></td>
-                <td><input type="submit" style="width:100%" value="Зарегистрироваться"/></td>
-            </tr>
-        </table>
-    </form>
-</div>
+	<div style="text-align:center">
+		<h2 style="text-align:center">Регистрация в сервисе поиска игроков в настольный теннис!</h2>
+		<div th:if="${errorMessage}" th:utext="${errorMessage}" style="color:red;font-style:italic;">
+			...
+		</div>
+		<h3>Пожалуйста, заполните поля:</h3>
+		<form th:action="@{/registration}" th:object="${newUser}" method="post">
+			<table th:align="center">
+				<tr>
+					<td th:align="right"><label>Имя:</label></td>
+					<td><input type="text" th:field="*{name}"></td>
+				</tr>
+				<tr>
+					<td th:align="right"><label>Пол:</label></td>
+					<td><select style="width:100%" th:field="*{gender}">
+							<option th:each="gender : ${genders}" th:value="${gender}" th:text="${gender}"></option>
+						</select></td>
+				</tr>
+				<tr>
+					<td th:align="right"><label>Уровень:</label></td>
+					<td><select style="width:100%" th:field="*{level}">
+							<option th:each="level : ${levels}" th:value="${level}" th:text="${level}"></option>
+						</select></td>
+				</tr>
+				<tr>
+					<td th:align="right"><label>Логин:</label></td>
+					<td><input type="text" th:field="*{login}" /></td>
+				</tr>
+				<tr>
+					<td th:align="right"><label>Пароль:</label></td>
+					<td><input type="password" th:field="*{password}"></td>
+				</tr>
+				<tr>
+					<td th:align="right"><label>Пароль ещё раз:</label></td>
+					<td><input type="password" th:field="*{passwordConfirm}"></td>
+				</tr>
+				<tr>
+					<td th:align="right"><label>Электронная почта (необязательно):</label></td>
+					<td><input type="text" th:field="*{email}" /></td>
+				</tr>
+				<tr>
+					<td></td>
+					<td><input type="submit" style="width:100%" value="Зарегистрироваться" /></td>
+				</tr>
+			</table>
+		</form>
+	</div>
 </body>
+
 </html>

@@ -30,9 +30,8 @@ public class NewUser {
         isEmpty = isEmpty || _password == null || _password.isEmpty();
         isEmpty = isEmpty || _passwordConfirm == null || _passwordConfirm.isEmpty();
         isEmpty = isEmpty || _name == null || _name.isEmpty();
-        isEmpty = isEmpty || _gender == null ;
-        isEmpty = isEmpty || _level == null ;
-        isEmpty = isEmpty || _email == null;
+        isEmpty = isEmpty || _gender == null;
+        isEmpty = isEmpty || _level == null;
         return isEmpty;
     }
 

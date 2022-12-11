@@ -2,6 +2,7 @@ package ru.iskandar.playersearcher.controller;
 
 import java.security.Principal;
 
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -39,10 +40,12 @@ public class ChatController {
 
         Player recipient = PlayersRepo.getInstance().findPlayerByLogin(aMessage.getRecipientLogin())
                 .orElseThrow();
-        // TODO отправлять сообщение только если сообщение не было прочитано в течении 10 минут.
-        _emailService.sendEmail(recipient.getEmail(), "Новое личное сообщение",
-                String.format("%s отправил вам личное сообщение.",
-                        sender));
+        if (Strings.isNotEmpty(recipient.getEmail())) {
+            // TODO отправлять сообщение только если сообщение не было прочитано в течении 10 минут.
+            _emailService.sendEmail(recipient.getEmail(), "Новое личное сообщение",
+                    String.format("%s отправил вам личное сообщение.",
+                            sender));
+        }
     }
 
 }

@@ -8,6 +8,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContext;
@@ -366,9 +367,11 @@ public class MainController {
             meeting.setSchedule(suggestGameForm.getSchedule());
         }
         Player opponent = PlayersRepo.getInstance().findPlayerByLogin(aLogin).orElseThrow();
-        _emailService.sendEmail(opponent.getEmail(), "Приглашение на игру.",
-                String.format("%s пригласил вас на игру.",
-                        currentUser.getName()));
+        if (Strings.isNotEmpty(opponent.getEmail())) {
+            _emailService.sendEmail(opponent.getEmail(), "Приглашение на игру.",
+                    String.format("%s пригласил вас на игру.",
+                            currentUser.getName()));
+        }
         return "redirect:/suggestions";
     }
 
@@ -404,9 +407,11 @@ public class MainController {
                     String.format("Встреча с %s не найдена.", opponent.getName()));
         }
         meetingOpt.get().setStatus(MeetingStatus.ACCEPTED);
-        _emailService.sendEmail(opponent.getEmail(), "Подтверждение предстоящей игры.",
-                String.format("%s принял ваше приглашение на игру.",
-                        currentUser.getName()));
+        if (Strings.isNotEmpty(opponent.getEmail())) {
+            _emailService.sendEmail(opponent.getEmail(), "Подтверждение предстоящей игры.",
+                    String.format("%s принял ваше приглашение на игру.",
+                            currentUser.getName()));
+        }
         return "redirect:/suggestions";
     }
 
@@ -424,9 +429,11 @@ public class MainController {
                     String.format("Встреча с %s не найдена.", opponent.getName()));
         }
         meetingOpt.get().setStatus(MeetingStatus.DECLINED);
-        _emailService.sendEmail(opponent.getEmail(), "Отмена предстоящей игры.",
-                String.format("%s отклонил ваше приглашение на игру.",
-                        currentUser.getName()));
+        if (Strings.isNotEmpty(opponent.getEmail())) {
+            _emailService.sendEmail(opponent.getEmail(), "Отмена предстоящей игры.",
+                    String.format("%s отклонил ваше приглашение на игру.",
+                            currentUser.getName()));
+        }
         return "redirect:/suggestions";
     }
 
