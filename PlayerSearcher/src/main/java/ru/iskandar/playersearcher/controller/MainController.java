@@ -7,7 +7,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContext;
@@ -40,6 +39,7 @@ import ru.iskandar.playersearcher.repo.MeetingStatus;
 import ru.iskandar.playersearcher.repo.PlayersRepo;
 import ru.iskandar.playersearcher.repo.PlayersSearchParamsRepo;
 import ru.iskandar.playersearcher.repo.SuggestionsRepo;
+import ru.iskandar.playersearcher.utils.StringUtils;
 
 @Controller
 public class MainController {
@@ -318,7 +318,7 @@ public class MainController {
             meeting.setSchedule(suggestGameForm.getSchedule());
         }
         Player opponent = PlayersRepo.getInstance().findPlayerByLogin(aLogin).orElseThrow();
-        if (Strings.isNotEmpty(opponent.getEmail())) {
+        if (!StringUtils.isNullOrEmpty(opponent.getEmail())) {
             _emailService.sendEmail(opponent.getEmail(), "Приглашение на игру.",
                     String.format("%s пригласил вас на игру.",
                             currentUser.getName()));
@@ -358,7 +358,7 @@ public class MainController {
                     String.format("Встреча с %s не найдена.", opponent.getName()));
         }
         meetingOpt.get().setStatus(MeetingStatus.ACCEPTED);
-        if (Strings.isNotEmpty(opponent.getEmail())) {
+        if (!StringUtils.isNullOrEmpty(opponent.getEmail())) {
             _emailService.sendEmail(opponent.getEmail(), "Подтверждение предстоящей игры.",
                     String.format("%s принял ваше приглашение на игру.",
                             currentUser.getName()));
@@ -380,7 +380,7 @@ public class MainController {
                     String.format("Встреча с %s не найдена.", opponent.getName()));
         }
         meetingOpt.get().setStatus(MeetingStatus.DECLINED);
-        if (Strings.isNotEmpty(opponent.getEmail())) {
+        if (!StringUtils.isNullOrEmpty(opponent.getEmail())) {
             _emailService.sendEmail(opponent.getEmail(), "Отмена предстоящей игры.",
                     String.format("%s отклонил ваше приглашение на игру.",
                             currentUser.getName()));

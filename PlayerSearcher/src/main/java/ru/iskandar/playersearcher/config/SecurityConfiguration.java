@@ -7,17 +7,11 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.*;
-import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import ru.iskandar.playersearcher.controller.UserService;
-import ru.iskandar.playersearcher.model.Player;
-import ru.iskandar.playersearcher.repo.PlayersRepo;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import ru.iskandar.playersearcher.controller.UserService;
 
 @Configuration
 @EnableWebSecurity

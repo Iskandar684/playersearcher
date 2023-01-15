@@ -11,8 +11,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -31,6 +29,7 @@ import ru.iskandar.playersearcher.model.ChatMessage;
 import ru.iskandar.playersearcher.model.Player;
 import ru.iskandar.playersearcher.repo.ChatMessageRepo;
 import ru.iskandar.playersearcher.repo.PlayersRepo;
+import ru.iskandar.playersearcher.utils.StringUtils;
 
 @Log
 @Controller
@@ -45,7 +44,7 @@ public class ChatController {
     @MessageMapping("/chat.sendMessage")
     // @SendTo("/topic/private")
     public void sendMessage(ChatMessage aMessage, Principal aSenderPrincipal) throws Exception {
-        if (StringUtils.isEmpty(aMessage.getContent())) {
+        if (StringUtils.isNullOrEmpty(aMessage.getContent())) {
             return;
         }
         ChatMessageRepo.INSTANCE.addMessage(aMessage);
@@ -68,7 +67,7 @@ public class ChatController {
                 .stream()
                 .filter(message -> aSenderPrincipal.getName().equals(message.getRecipientLogin()))
                 .forEach(message -> message.setViewed(true));
-        if (Strings.isNotEmpty(recipient.getEmail())) {
+        if (!StringUtils.isNullOrEmpty(recipient.getEmail())) {
             // TODO отправлять сообщение только если сообщение не было прочитано в течении 10 минут.
             _emailService.sendEmail(recipient.getEmail(), "Новое личное сообщение",
                     String.format("%s отправил вам личное сообщение.",
@@ -133,7 +132,6 @@ public class ChatController {
         model.addAttribute("chats", chats);
         return "messenger";
     }
-
 
     private Player getCurrentUser() {
         SecurityContext context = SecurityContextHolder.getContext();

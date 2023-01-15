@@ -1,6 +1,11 @@
 package ru.iskandar.playersearcher.model;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -122,7 +127,8 @@ public class Schedule {
 				.flatMap(entry -> entry.getValue().stream().map(HourInterval::of)).collect(Collectors.toSet());
 	}
 
-	public String toString() {
+	@Override
+    public String toString() {
 		StringBuilder builder = new StringBuilder();
 		for (Map.Entry<DayOfWeek, List<String>> entry : _dayToHoursMap.entrySet()) {
 			Collection<String> intervals = entry.getValue();
